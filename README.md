@@ -1,6 +1,6 @@
 # Sistema de ventas, facturación e inventario para Tienda San Antonio
 
-## Desarrollo de Software Empresarial | Universidad Don Bosco
+## Desarrollo de Software Empresarial 02T | Universidad Don Bosco
 
 ### Integrantes:
 
