@@ -1,0 +1,61 @@
+:root {
+    --rojo: #BA2202;
+    --amarillo: #FFE800;
+    --negro: #1C1C1C;
+    --fondo: #eaf4f4;
+}
+
+body {
+    background-color: #fff
+}
+
+#auth {
+    height: 100vh;
+    overflow-x: hidden
+}
+
+#auth #auth-right {
+    height: 100%;
+    background-color: var(--rojo);
+}
+
+#auth #auth-left {
+    padding: 5rem 8rem
+}
+
+#auth #auth-left .auth-title {
+    font-size: 4rem;
+    margin-bottom: 1rem
+}
+
+#auth #auth-left .auth-subtitle {
+    font-size: 1.7rem;
+    line-height: 2.5rem;
+    color: #a8aebb
+}
+
+#auth #auth-left .auth-logo {
+    margin-bottom: 7rem
+}
+
+#auth #auth-left .auth-logo img {
+    height: 2rem
+}
+
+.btn-primary {
+    background-color: var(--rojo) !important;
+    border: solid 1px var(--rojo) !important;
+    transition: all 250ms !important;
+}
+
+.btn-primary:hover {
+    background-color: var(--negro) !important;
+    border: solid 1px var(--negro) !important;
+    color: #fff !important;
+}
+
+@media screen and (max-width:767px) {
+    #auth #auth-left {
+        padding: 5rem
+    }
+}
