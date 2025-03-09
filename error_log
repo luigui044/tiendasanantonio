@@ -1,0 +1,15 @@
+[09-Mar-2025 15:31:56 UTC] PHP Warning:  require(/home/k25mwiwv82jn/public_html/sanantonio/vendor/autoload.php): Failed to open stream: No such file or directory in /home/k25mwiwv82jn/public_html/sanantonio/artisan on line 18
+[09-Mar-2025 15:31:56 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/k25mwiwv82jn/public_html/sanantonio/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/k25mwiwv82jn/public_html/sanantonio/artisan:18
+Stack trace:
+#0 {main}
+  thrown in /home/k25mwiwv82jn/public_html/sanantonio/artisan on line 18
+[09-Mar-2025 15:32:04 UTC] PHP Warning:  require(/home/k25mwiwv82jn/public_html/sanantonio/vendor/autoload.php): Failed to open stream: No such file or directory in /home/k25mwiwv82jn/public_html/sanantonio/artisan on line 18
+[09-Mar-2025 15:32:04 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/k25mwiwv82jn/public_html/sanantonio/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/k25mwiwv82jn/public_html/sanantonio/artisan:18
+Stack trace:
+#0 {main}
+  thrown in /home/k25mwiwv82jn/public_html/sanantonio/artisan on line 18
+[09-Mar-2025 15:32:12 UTC] PHP Warning:  require(/home/k25mwiwv82jn/public_html/sanantonio/vendor/autoload.php): Failed to open stream: No such file or directory in /home/k25mwiwv82jn/public_html/sanantonio/artisan on line 18
+[09-Mar-2025 15:32:12 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/k25mwiwv82jn/public_html/sanantonio/vendor/autoload.php' (include_path='.:/opt/alt/php82/usr/share/pear:/opt/alt/php82/usr/share/php:/usr/share/pear:/usr/share/php') in /home/k25mwiwv82jn/public_html/sanantonio/artisan:18
+Stack trace:
+#0 {main}
+  thrown in /home/k25mwiwv82jn/public_html/sanantonio/artisan on line 18
