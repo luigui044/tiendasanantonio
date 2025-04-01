@@ -67,9 +67,9 @@ Route::put('modBodega/{id}',[Inventario::class,'editBodega'])->name('editBodega'
 Route::post('addInventario',[Inventario::class,'addInventario'])->name('addInventario');
 
 
-Route::post('filtProd',[Operaciones::class,'filtProd'])->name('filtProd');
-Route::post('filtProd2',[Operaciones::class,'filtProd2'])->name('filtProd2');
-Route::post('filtCant',[Operaciones::class,'filtCant'])->name('filtCant');
+Route::post('filtProd',[VentasController::class,'filtProd'])->name('filtProd');
+Route::post('filtProd2',[VentasController::class,'filtProd2'])->name('filtProd2');
+Route::post('filtCant',[VentasController::class,'filtCant'])->name('filtCant');
 
 // Ventas consumidor final
 Route::get('/ventas/inicio', [VentasController::class, 'inicio'])->name('ventas.inicio');

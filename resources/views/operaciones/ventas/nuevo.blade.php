@@ -13,28 +13,29 @@
                 <i class="fa-solid fa-cart-shopping me-3"></i>
                 Listado de ventas
             </a>
-            <a href="" class="btn btn-lg btn-success ms-2 me-2" id="btn-escanear">
+            {{-- <a href="" class="btn btn-lg btn-success ms-2 me-2" id="btn-escanear">
                 <i class="fa-solid fa-barcode me-3"></i>
                 Escanear código de barras
-            </a>
+            </a> --}}
         </div>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#info-cliente"
+                <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#info-venta" type="button" role="tab"
+                    aria-controls="info-venta" aria-selected="false">Lista de compra</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link " id="home-tab" data-bs-toggle="tab" data-bs-target="#info-cliente"
                     type="button" role="tab" aria-controls="info-cliente" aria-selected="true">Información de la
                     venta</button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#info-venta" type="button"
-                    role="tab" aria-controls="info-venta" aria-selected="false">Lista de compra</button>
-            </li>
+
         </ul>
 
         <form method="POST" action="{{ route('ventas.crear.post') }}">
             @csrf
             <div class="tab-content" id="myTabContent">
-                <div class="tab-pane fade show active" id="info-cliente" role="tabpanel" aria-labelledby="home-tab"
+                <div class="tab-pane fade " id="info-cliente" role="tabpanel" aria-labelledby="home-tab"
                     tabindex="0">
                     <div class="row mt-4">
                         <div class="card">
@@ -93,7 +94,7 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade" id="info-venta" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+            <div class="tab-pane fade show active" id="info-venta" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
                 <div class="row mt-4">
                     <div class="col-12 col-lg-7">
                         <div class="card">
@@ -283,4 +284,14 @@
 @section('scripts')
     <script type="text/javascript" src="{{ asset('assets/js/pages/ventas.js') }}"></script>
     <script type="text/javascript" src="{{ asset('assets/js/pages/codigo-barras.js') }}"></script>
+
+    <script>
+    const buscador = document.querySelector('input[type="search"]');
+
+        window.onload = function () {
+            setTimeout(function () {
+                buscador.focus();
+            }, 500); // Un pequeño retraso para asegurar que el DataTable cargó correctamente
+        }
+    </script>
 @endsection

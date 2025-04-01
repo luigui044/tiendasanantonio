@@ -13,10 +13,11 @@ $('#paginacion').DataTable({
         'search': 'Buscar:',
         'zeroRecords': 'Sin resultados encontrados',
         'paginate': {
-        'first': 'Primero',
-        'last': 'Último',
-        'next': 'Siguiente',
-        'previous': 'Anterior'
+            'first': 'Primero',
+            'last': 'Último',
+            'next': 'Siguiente',
+            'previous': 'Anterior'
         }
     },
 });
+

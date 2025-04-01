@@ -14,7 +14,7 @@ use App\Models\Cliente;
 use App\Models\VCliente;
 use App\Models\Bodega;
 use App\Models\MesesVenta;
-use App\Models\Ventum;
+use App\Models\Venta;
 use App\Models\VProv;
 use App\Models\VProd;
 use App\Models\VProducto;
@@ -158,7 +158,7 @@ class HomeController extends Controller
     public function resumenGerencial()
     {
         $bodegas = Bodega::where('estado', 1)->orderby('bodega')->get();
-        $aniosVenta = Ventum::select(DB::raw('DISTINCT(YEAR(fecha_hora)) as anio'))->get();
+        $aniosVenta = Venta::select(DB::raw('DISTINCT(YEAR(fecha_hora)) as anio'))->get();
         $mesesVenta = MesesVenta::all();
 
         return view('gerencial.index', compact('bodegas', 'mesesVenta', 'aniosVenta'));

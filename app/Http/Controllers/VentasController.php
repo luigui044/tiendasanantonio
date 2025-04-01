@@ -12,6 +12,7 @@ use App\Models\VProducto;
 use PDF;
 use Exception;
 use JavaScript;
+use Dompdf\Dompdf;
 
 class VentasController extends Controller
 {
@@ -21,7 +22,9 @@ class VentasController extends Controller
     }
     
     public function inicio() {
-        $ventas = Venta::all();
+        $ventas = Venta::join('clientes', 'ventas.cliente', '=', 'clientes.id_cliente')
+            ->select('ventas.*', 'clientes.nombre as nombre_cliente')
+            ->get();
 
         return view('operaciones.ventas.inicio', compact('ventas'));
     }
@@ -123,11 +126,16 @@ class VentasController extends Controller
             $factura->save();
         }
 
-        // return view('operaciones.recibos.venta', compact('venta'));
-        return PDF::loadView('operaciones.recibos.venta', compact('venta'))
-                  ->stream('venta_' . $venta->id_venta . '_' . date_format(date_create($venta->fecha_hora), 'd-m-Y' . '.pdf'));
-    }
+        // Convertir logo a base64
+        $logoPath = public_path('assets/logo2.png');
+        $logoBase64 = base64_encode(file_get_contents($logoPath));
 
+        $pdf = new Dompdf();
+        $pdf->loadHtml(view('operaciones.recibos.venta', compact('venta', 'logoBase64'))->render());    
+        $pdf->setPaper([0, 0, 164.409, 425.197], 'portrait'); // 58mm x 150mm = 164.409pt x 425.197pt
+        $pdf->render();
+        return $pdf->stream("venta_{$venta->id_venta}_" . date_format(date_create($venta->fecha_hora), 'd-m-Y') . '.pdf');            
+    }
 
     public function convertirFormato($valor){
         return str_replace("$", "", $valor);

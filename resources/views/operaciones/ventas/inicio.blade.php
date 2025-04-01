@@ -32,7 +32,7 @@
                                 <tbody>
                                     @foreach ($ventas as $venta)
                                         <tr>
-                                            <td>{{ $venta->elcliente->nombre }}</td>
+                                            <td>{{ $venta->nombre_cliente }}</td>
                                             <td>${{ number_format($venta->total, 2) }} </td>
                                             <td>${{ number_format($venta->total_iva, 2) }}</td>
                                             <td>{{ date_format(date_create($venta->fecha_hora), "d/m/Y - H:i:s") }}</td>
