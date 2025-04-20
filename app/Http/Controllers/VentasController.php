@@ -80,6 +80,7 @@ class VentasController extends Controller
        
             try {
                 $resultadoDTE = $this->enviarDTE($venta);
+                // Log::info('resultadoDTE: ' . json_encode($resultadoDTE));
                 if (!$resultadoDTE) {
                     Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
                     // No lanzamos excepción para permitir que continúe el flujo
@@ -237,7 +238,7 @@ public function ticketRawBT2($id_venta)
                 $firmarDTE = $url_firmador . 'firmardocumento/';
                 $tipo_venta = $venta->tipo_venta;
                 $json = DTEBuilder::build($venta, $empresa, $tipo_venta);
-                Log::info(json_encode($json));
+                // Log::info(json_encode($json));
 
 
                 $response = Http::post($firmarDTE, $json); 
@@ -245,6 +246,11 @@ public function ticketRawBT2($id_venta)
             if ($response->successful()) {
               //pasamos a enviar factura a hacienda
               $this->enviarFactura($facturaFirmada, (string)$venta->uuid, $tipo_venta);
+              return response()->json([
+                'success' => 'Factura enviada con éxito',
+                'status' => $response->status(),
+                'response' => $response->json()
+              ], 200);
             }
 
 
@@ -344,7 +350,7 @@ public function ticketRawBT2($id_venta)
 
     public function enviarFactura($facturaFirmada, $codigoGeneracion, $tipo_venta){
         $url_dte = 'https://apitest.dtes.mh.gob.sv/fesv/recepciondte';
-        Log::info('facturaFirmada: ' . json_encode($facturaFirmada));
+        // Log::info('facturaFirmada: ' . json_encode($facturaFirmada));
         switch ($tipo_venta) {
             case 2:
             

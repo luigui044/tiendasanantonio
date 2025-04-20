@@ -8,7 +8,7 @@ class DTEBuilder
 {
     public static function build($venta, $empresa, $tipo)
     {
-        Log::info("Tipo de DTE: $tipo");
+        // Log::info("Tipo de DTE: $tipo");
         
         switch ($tipo) {
             case 1:
