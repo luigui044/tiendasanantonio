@@ -12,3 +12,5 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs5/dt-1.12.1/b-2.2.3/r-2.3.0/datatables.min.css"/>
 <link rel="stylesheet" href="{{ asset('assets/vendors/toastify/toastify.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/vendors/bootstrap-icons/bootstrap-icons.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@yield('styles')

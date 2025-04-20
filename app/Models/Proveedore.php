@@ -24,7 +24,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $prestador_servicios
  * @property int|null $contratista
  * @property int|null $estado
- * 
+ * @property int|null $oferente
+ * @property int|null $suministrante_bienes
  * @property CatGiro|null $cat_giro
  *
  * @package App\Models

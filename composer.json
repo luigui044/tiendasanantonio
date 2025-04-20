@@ -16,12 +16,13 @@
         "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laracasts/utilities": "^3.2",
-        "laravel/framework": "^8.12",
+        "laravel/framework": "8.83",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "laraveles/spanish": "^1.5",
         "mike42/escpos-php": "^3.0",
-        "reliese/laravel": "^1.1"
+        "reliese/laravel": "^1.1",
+        "simplesoftwareio/simple-qrcode": "^4.2"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

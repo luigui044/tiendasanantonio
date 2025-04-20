@@ -41,7 +41,7 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="{{ route('operacion', 12) }}">Venta consumidor final</a></li>
-                        <li><a class="dropdown-item" href="#">Venta crédito fiscal</a></li>
+                        <li><a class="dropdown-item" href="{{ route('operacion', 13) }}">Venta crédito fiscal</a></li>
                         <li><a class="dropdown-item" href="{{ route('operacion', 14) }}">Egresos</a></li>
                     </ul>
                 </li>

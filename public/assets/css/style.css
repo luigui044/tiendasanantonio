@@ -111,6 +111,10 @@ th {
 }
 
 .id-producto-agregado {
+    /* display: none !important; */
+}
+
+.btn-sidebar {
     display: none !important;
 }
 
@@ -238,14 +242,22 @@ th {
 
 /* Datos de venta (total, monto, cambio)  */
 
+.navbar{
+    z-index: 10000 !important;
+}
+
+#navbarTogglerDemo02{
+  padding-bottom: 0.7rem !important;
+}
+
 .datos-venta {
     width: 100%;
     position: fixed;
     bottom: 0;
     left: 0;
     z-index: 1000;
-    padding: 2.5rem 1rem;
-    display: flex;
+    padding: 0.5rem 0.5rem;
+    
     justify-content: space-evenly;
     align-items: center;
     background-color: var(--negro);
@@ -367,3 +379,5 @@ th {
         text-align: left !important;
     }
 }
+
+

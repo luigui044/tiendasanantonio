@@ -13,23 +13,28 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 mix.js('resources/js/app.js', 'public/js')
     .vue()
-    .sass('resources/sass/app.scss', 'public/css').options({
-        processCssUrls: false
-    })
-    .webpackConfig({
-        plugins: [
-            new BrowserSyncPlugin({
-                proxy: 'http://localhost:8000', // Cambia esto por tu URL local de Laravel
-                files: [
-                    'app/**/*.php',
-                    'resources/views/**/*.blade.php',
-                    'routes/**/*.php'
-                ],
-                open: false,
-                notify: false
-            })
-        ]
-    });;
+    .sass('resources/sass/app.scss', 'public/css')
+
+
+
+mix.webpackConfig({
+    plugins: [
+        new BrowserSyncPlugin({
+            proxy: 'http://localhost:8000', // URL de tu servidor local (Laravel con `php artisan serve`)
+            files: [
+                'app/**/*.php',
+                'resources/views/**/*.blade.php',
+                'routes/**/*.php',
+                'public/js/**/*.js',
+                'public/css/**/*.css'
+            ],
+            open: false,
+            notify: false
+        })
+    ]
+});
+
+
 
 
 if (mix.inProduction()) {

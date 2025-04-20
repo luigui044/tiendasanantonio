@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $cantidad
  * @property string $bodega
  * @property Carbon|null $fecha_actualizacion
- *
+ * @property int $precio
  * @package App\Models
  */
 class VInventario extends Model

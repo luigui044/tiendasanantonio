@@ -7,20 +7,31 @@
 namespace App\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Ventum
+ * Class Venta
  * 
  * @property int $id_venta
+ * @property int $id_vendedor
  * @property int|null $cliente
+ * @property string|null $nombre_cliente
  * @property int|null $tienda
  * @property Carbon|null $fecha_hora
  * @property float|null $total
  * @property float|null $total_iva
  * @property string|null $comentarios
- * 
+ * @property string $uuid
+ * @property string $numero_control
+ * @property string|null $url_pdf	
  * @property Bodega|null $bodega
+ * @property User $user
+ * @property Collection|DetalleVenta[] $detalles_venta
+ * @property Collection|Factura[] $facturas
+ * @property int $id_usuario
+ * @property int $id_sucursal
+ * @property int $tipo_venta
  *
  * @package App\Models
  */
@@ -32,17 +43,14 @@ class Venta extends Model
 
 	protected $casts = [
 		'id_vendedor' => 'int',
-		'cliente' => 'int',
 		'tienda' => 'int',
+		'fecha_hora' => 'datetime',
 		'total' => 'float',
 		'total_iva' => 'float'
 	];
 
-	protected $dates = [
-		'fecha_hora'
-	];
-
 	protected $fillable = [
+		'id_vendedor',
 		'cliente',
 		'nombre_cliente',
 		'tienda',
@@ -50,24 +58,36 @@ class Venta extends Model
 		'total',
 		'total_iva',
 		'comentarios',
-		'id_vendedor'
+		'uuid',
+		'numero_control',
+		'url_pdf',
+		'id_usuario',
+		'id_sucursal',
+		'tipo_venta'
 	];
 
 	public function elcliente()
 	{
-		return $this->belongsTo(Cliente::class, 'cliente', 'id_cliente');
+		return $this->belongsTo(Cliente::class, 'cliente');
 	}
 
 	public function bodega()
 	{
 		return $this->belongsTo(Bodega::class, 'tienda');
 	}
-	
-	public function detalles() {
-		return $this->hasMany(DetalleVenta::class, 'id_venta', 'id_venta');
+
+	public function user()
+	{
+		return $this->belongsTo(User::class, 'id_vendedor');
 	}
 
-	public function factura() {
-		return $this->hasOne(Factura::class, 'id_venta', 'id_venta');
+	public function detalles()
+	{
+		return $this->hasMany(DetalleVenta::class, 'id_venta');
+	}
+
+	public function facturas()
+	{
+		return $this->hasMany(Factura::class, 'id_venta');
 	}
 }

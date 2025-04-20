@@ -17,7 +17,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $proveedor
  * @property string $descripcion
  * @property int $categoria
- * 
+ * @property string $unidad_medida
+ * @property string $unidad_medida_mh
+ * @property string $cod_bar
+ * @property float $descuento
  * @property Proveedore $proveedore
  * @property CateProducto $cate_producto
  *
@@ -42,7 +45,11 @@ class Producto extends Model
 		'descuento',
 		'proveedor',
 		'descripcion',
-		'categoria'
+		'categoria',
+		'unidad_medida',
+		'unidad_medida_mh',
+		'cod_bar'
+		
 	];
 
 	public function proveedore()
@@ -53,5 +60,10 @@ class Producto extends Model
 	public function cate_producto()
 	{
 		return $this->belongsTo(CateProducto::class, 'categoria');
+	}
+
+	public function detalles()
+	{
+		return $this->hasMany(DetalleVenta::class, 'producto');
 	}
 }

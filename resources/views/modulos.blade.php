@@ -3,7 +3,7 @@
 @section('titulo', 'Módulos')
 
 @section('contenido')
-    <section class="roles">
+    <section class="roles"  >
         <a href="{{ route('submodulos', 1) }}" class="animate__animated animate__slideInLeft">
             <div class="row">
                 <h2 class="text-center">Gerencial</h2>

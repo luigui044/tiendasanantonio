@@ -6,7 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Usuarios;
 use App\Http\Controllers\Inventario;
 use App\Http\Controllers\Operaciones;
-
+use App\Http\Controllers\CatalogosController;
 use App\Http\Controllers\Impresiones;
 use App\Http\Controllers\VentasController;
 
@@ -76,6 +76,8 @@ Route::get('/ventas/inicio', [VentasController::class, 'inicio'])->name('ventas.
 Route::post('/ventas/nueva',[VentasController::class, 'nueva'])->name('ventas.crear.post');
 Route::get('/ventas/detalle/{id}', [VentasController::class, 'detalle'])->name('ventas.detalle');
 Route::get('/ventas/factura/{id_venta}',[VentasController::class, 'factura'])->name('ventas.factura');
+Route::get('/ventas/ticket/{id_venta}',[VentasController::class, 'ticketRawBT'])->name('ventas.ticket');
+Route::get('/ventas/ticket2/{id_venta}',[VentasController::class, 'ticketRawBT2'])->name('ventas.ticket2');
 
 Route::get('prin/{venta}',[Impresiones::class,'reciboVenta'])->name('reciboVenta2');
 Route::get('print/{venta}',[Impresiones::class,'reciboVenta'])->name('reciboVenta3');
@@ -91,6 +93,8 @@ Route::get('/informacion-graficos-general', [HomeController::class, 'informacion
 Route::post('/informacion-graficos-filtrada', [HomeController::class, 'informacionGraficosFiltrada'])->name('informacionGraficosFiltrada');
 Route::post('top-productos-tipo-cliente', [HomeController::class, 'topProductosTipoCliente'])->name('topProductosTipoCliente');
 
+Route::get('/producto/{codigo}', [HomeController::class, 'buscarProductoPorCodigo']);
+
 Route::get('/prueba', function() {
     $ventaVsCreditoF = App\Models\VVenta::select(DB::raw('SUM(total) as total_venta'), 
                 DB::raw('MONTH(fecha_hora) as mes'), DB::raw('YEAR(fecha_hora) as anio'),
@@ -103,4 +107,6 @@ Route::get('/prueba', function() {
     return $ventaVsCreditoF;
 });
 
-Route::view('/proof', 'prueba');
+Route::get('/obtener-municipios', [CatalogosController::class, 'obtenerMunicipios'])->name('obtenerMunicipios');     
+
+Route::post('/enviarDTE', [VentasController::class, 'enviarDTE'])->name('enviarDTE');

@@ -116,6 +116,7 @@
                                         @enderror
                                     </div>
                                 </div>
+
                                 <div class="row mt-2">
                                     <div class="col-12">
                                         <label for="cod_bar">Código de barras:</label>
@@ -133,6 +134,35 @@
                                                 {{ $message }}
                                             </div>
                                         @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="unidad_medida">Unidad de medida:</label>
+                                        <div class="form-group position-relative has-icon-left">
+                                            <input type="text" 
+                                                class="form-control @error('unidad_medida') is-invalid @enderror"
+                                                placeholder="Unidad de medida" id="unidad_medida" name="unidad_medida"
+                                                value="{{ old('unidad_medida') }}">
+                                            <div class="form-control-icon">
+                                                <i class="bi bi-rulers"></i>
+                                            </div>
+                                        </div>
+                                        @error('unidad_medida')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="unidad_medida_hacienda">Unidad de medida hacienda:</label>
+                                        <fieldset class="form-group">
+                                            <select class="form-select" id="unidad_medida_hacienda" name="unidad_medida_hacienda">
+                                                @foreach ($unidades as $item)
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->nombre }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </fieldset>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-3">
@@ -163,16 +193,19 @@
                                             <th class="text-white">Producto</th>
                                             <th class="text-white">Precio</th>
                                             <th class="text-white">Descripción</th>
+                                                   <th class="text-white">Unidad de medida</th>
                                             <th class="text-white">Opciones</th>
+                                     
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @foreach ($productos as $item)
                                             <tr>
-                                                <td>{{ $item->id_prod }}</td>
+                                                <td>{{ $item->cod_bar }}</td>
                                                 <td>{{ $item->producto }}</td>
                                                 <td>${{ number_format($item->precio, 2) }}</td>
                                                 <td>{{ $item->descripcion }}</td>
+                                                 <td>{{ $item->unidad_medida }}</td>
                                                 <td>
                                                     <div class="d-flex">
                                                         <a href="{{ route('detaProd', $item->id_prod) }}"
@@ -182,6 +215,7 @@
                                                         </a>
                                                     </div>
                                                 </td>
+                                               
                                             </tr>
                                         @endforeach
                                     </tbody>

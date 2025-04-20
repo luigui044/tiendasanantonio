@@ -24,8 +24,12 @@ use App\Models\VVentasBodega;
 use App\Models\VProductosBodega;
 use App\Models\VProductosCliente;
 use App\Models\VProductosFecha;
+use App\Models\CatUnidadMedida;
+use App\Models\CatDepartamento;
+use App\Models\CatActividadesEconomica; 
 use DB;
 use JavaScript;
+use Illuminate\Support\Facades\Log;
 
 
 class HomeController extends Controller
@@ -40,6 +44,11 @@ class HomeController extends Controller
         $this->middleware('auth');
     }
 
+    public function buscarProductoPorCodigo($codigo) {
+        $producto = Producto::where('cod_bar', $codigo)->first();
+        return response()->json($producto);
+    }
+
    
     public function modulos() {
         $rol = auth()->user()->rol;
@@ -48,11 +57,9 @@ class HomeController extends Controller
             case 1:
             case 2:
                 return view('modulos');
-                break;
             default:
                 $submodulos = Modulo::where('ban_padre', 3)->get();
                 return view('submodulos', compact('submodulos')); 
-                break;
         }
     }
 
@@ -120,7 +127,8 @@ class HomeController extends Controller
         $categorias = CateProducto::all();
         $productos = VProd::all();
         $proveedores = VProv::all();
-        return view('inventario.productos.productos', compact('proveedores', 'categorias', 'productos'));
+        $unidades = CatUnidadMedida::all();
+        return view('inventario.productos.productos', compact('proveedores', 'categorias', 'productos', 'unidades'));
     }
 
     private function cateProd()
@@ -131,7 +139,9 @@ class HomeController extends Controller
     public function clientes()
     {
         $clientes  =  VCliente::all();
-        return view('inventario.clientes.clientes', compact('clientes'));
+        $departamentos = CatDepartamento::all();
+        $actividades = CatActividadesEconomica::all();               
+        return view('inventario.clientes.clientes', compact('clientes', 'departamentos', 'actividades'));
     }
     public function bodegas($modulo)
     {
@@ -147,7 +157,20 @@ class HomeController extends Controller
         return view('inventario.productos.inventario', compact('inventarios', 'productos', 'bodegas'));
     }
 
-    public function consumidorFinal()
+    public function operacionVenta($tipoCliente)
+    {
+        $clientes = Cliente::where('estado', 1)
+        ->where('tipo_cliente', $tipoCliente)
+        ->get();
+        $departamentos = CatDepartamento::all();
+        $actividades = CatActividadesEconomica::all();
+        $bodega = env('BODEGA');
+  
+        $productos = VInventario::where('id_bodega', $bodega)->where('cantidad', '>', 0)->get();
+        return view('operaciones.ventas.nuevo', compact('productos', 'clientes', 'tipoCliente', 'departamentos', 'actividades' ));
+    }
+
+    public function creditoFiscal()
     {
         $clientes = Cliente::where('estado', 1)->get();
         $bodega = 4;
@@ -259,44 +282,33 @@ class HomeController extends Controller
         switch ($modulo) {
 
             case 5:
-                return   $this->rolesUsuarios();
-                break;
+                return $this->rolesUsuarios();
             case 6:
-                return   $this->creacionUsuarios();
-                break;
+                return $this->creacionUsuarios();
             case 7:
-                return   $this->modUsuarios();
-                break;
+                return $this->modUsuarios();
             case 8:
-                return   $this->clientes();
-                break;
+                return $this->clientes();
             case 9:
-                return   $this->proveedores();
-                break;
+                return $this->proveedores();
             case 10:
-                return   $this->productos();
-                break;
+                return $this->productos();
             case 11:
-                return   $this->inventario();
-                break;
+                return $this->inventario();
             case 12:
-                return   $this->consumidorFinal();
-                break;
+                return $this->operacionVenta(1);
+            case 13:
+                return $this->operacionVenta(2);
             case 14:
                 return redirect()->route('egresos.inicio');
-                break;
             case 16:
                 return $this->resumenGerencial();
-                break;
             case 18:
-                return   $this->cateProd();
-                break;
+                return $this->cateProd();
             case 19:
-                return   $this->bodegas($modulo);
-                break;
+                return $this->bodegas($modulo);
             default:
                 return abort(404);
-                break;
         }
     }
 }

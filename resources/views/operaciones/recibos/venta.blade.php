@@ -71,7 +71,8 @@
 
 <body>
     <div class="header">
-            <img src="data:image/png;base64,{{ $logoBase64 }}" alt="Logo" style="width: 100%; height: auto;">
+            <img src="data:image/png;base64,{{ $logoBase64 }}" alt="Logo" style="width: 200px; height: 100px;">
+                    <p><b>Tu mejor opción en Texistepeque</b></p>
         <h1 style="margin-bottom: 1mm;"><b>Tienda San Antonio</b></h1>
         <p><b>Casa Matriz: 3ra avenida sur, frente al Mercado de Texistepeque, Santa Ana</b></p>
         <p style="margin-bottom: 1mm;"><b>Sucursal: Final 3ra avenida sur y Calle Libertad, Texistepeque, Santa Ana</b></p>
@@ -117,8 +118,11 @@
     </div>
 
     <div class="footer">
+        <div style="text-align: center; margin: 10px 0;">
+            <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Code" style="width: 150px; height: 150px;">
+        </div>
         <p><b>¡Gracias por su compra!</b></p>
-        <p><b>Tu mejor opción en Texistepeque</b></p>
+
         <p><b>Vuelva pronto</b></p>
     </div>
 </body>

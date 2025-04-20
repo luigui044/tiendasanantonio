@@ -9,14 +9,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class DetalleVentum
+ * Class DetallesVentum
  * 
+ * @property int $id_detalle
  * @property int|null $id_venta
  * @property int|null $producto
  * @property int|null $cantidad
  * @property float|null $precio
+ * @property float|null $descuento
  * @property float|null $precio_iva
  * 
+ * @property Venta|null $venta
  *
  * @package App\Models
  */
@@ -27,6 +30,8 @@ class DetalleVenta extends Model
 	public $timestamps = false;
 
 	protected $casts = [
+		'id_venta' => 'int',
+		'producto' => 'int',
 		'cantidad' => 'int',
 		'precio' => 'float',
 		'descuento' => 'float',
@@ -47,7 +52,8 @@ class DetalleVenta extends Model
 		return $this->belongsTo(Producto::class, 'producto', 'id_prod');
 	}
 
-	public function venta() {
-		return $this->belongsTo(Venta::class, 'id_venta', 'id_venta');
+	public function venta()
+	{
+		return $this->belongsTo(Venta::class, 'id_venta');
 	}
 }

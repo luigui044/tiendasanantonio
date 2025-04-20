@@ -10,7 +10,9 @@ use App\Models\Producto;
 use App\Models\Cliente;
 use App\Models\Bodega;
 use App\Models\TInventario;
+use App\Models\CatActividadesEconomica;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class Inventario extends Controller
 {
@@ -79,14 +81,16 @@ class Inventario extends Controller
         $producto  = new Producto();
         $producto->producto = $request->producto;
         $producto->precio = $request->precio;
-        $producto->descuento = ($request->descuento / 100);
+        $producto->descuento = $request->descuento / 100;
         $producto->proveedor = $request->proveedor;
         $producto->descripcion = $request->descripcion;
         $producto->categoria = $request->categoria;
+        $producto->unidad_medida = $request->unidad_medida;
+        $producto->unidad_medida_mh = $request->unidad_medida_hacienda;
         $producto->cod_bar = $request->cod_bar;
         $producto->save();
 
-        return back()->with('mensaje', 'Producto '. $request->producto .' agregado éxitosamente');
+        return back()->with('mensaje', "Producto {$request->producto} agregado éxitosamente");
     }
 
     public function detaProd($id)
@@ -103,13 +107,13 @@ class Inventario extends Controller
         $producto =  Producto::findOrFail($id);
         $producto->producto = $request->producto;
         $producto->precio = $request->precio;
-        $producto->descuento = ($request->descuento / 100);
+        $producto->descuento = $request->descuento / 100;
         $producto->proveedor = $request->proveedor;
         $producto->descripcion = $request->descripcion;
         $producto->categoria = $request->categoria;
         $producto->cod_bar = $request->cod_bar;
         $producto->save();
-        return back()->with('mensaje', 'Información de producto '. $request->producto .' actualizada éxitosamente');
+        return back()->with('mensaje', "Información de producto {$request->producto} actualizada éxitosamente");
 
 
     }
@@ -155,21 +159,57 @@ class Inventario extends Controller
 
     public function addCliente(Request $request)
     {
+        
+        // Validar según el tipo de cliente
+        if ($request->input('chk_credito_hidden') === '1') {
+            // Cliente con crédito fiscal
+                
+            $clienteExistente = Cliente::where('credito_fiscal', $request->credito_fiscal)->first();
+            if ($clienteExistente) { 
+                return response()->json([
+                    'success' => false,
+                    'mensaje' => 'Ya existe un cliente registrado con ese número de crédito fiscal'
+                ]);
+            }
+        } else {
+            // Cliente con DUI
+            $clienteExistente = Cliente::where('dui', $request->dui)->first();
+            if ($clienteExistente) {
+                return response()->json([
+                    'success' => false, 
+                    'mensaje' => 'Ya existe un cliente registrado con ese número de DUI'
+                ]);
+            }
+        }
         $cliente = new Cliente();
-        $cliente->nombre = $request->nombre;
+        $cliente->nombre = strtoupper($request->nombre);
         $cliente->telefono = $request->telefono;
         $cliente->direccion = $request->direccion;
+        $cliente->correo = $request->correo;
 
-        if (isset($request->chk_credito)) {
+        $cliente->id_departamento = $request->departamento;
+        $cliente->id_municipio = $request->municipio;
+
+
+        if ($request->input('chk_credito_hidden') === '1') {
+            $des_sactividad = CatActividadesEconomica::where('codigo', $request->actividad_economica)->first();
             $cliente->tipo_cliente = 2;
             $cliente->credito_fiscal = $request->credito_fiscal;
+            $cliente->nrc = $request->nrc;
+            $cliente->cod_actividad_economica = $request->actividad_economica;
+            $cliente->des_actividad_economica = $des_sactividad->descripcion;
+
         } else {
             $cliente->tipo_cliente = 1;
             $cliente->dui = $request->dui;
         }
 
         $cliente->save();
-        return back()->with('mensaje', 'Cliente agregado éxitosamente');
+        return response()->json([
+            'success' => true, 
+            'mensaje' => 'Cliente agregado éxitosamente',
+            'cliente' => $cliente
+        ]);
 
     }
 
