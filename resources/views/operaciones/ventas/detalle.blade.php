@@ -16,10 +16,12 @@
                     Nueva venta crédito fiscal     
                 </a>
                 @endif
-                <a href="{{ route('ventas.inicio') }}" class="btn btn-lg btn-success me-3">
-                    <i class="fa-solid fa-cart-shopping me-3"></i>
-                    Listado de ventas
-                </a>
+                @if(auth()->user()->rol == 1 || auth()->user()->rol == 2)
+                    <a href="{{ route('ventas.inicio') }}" class="btn btn-lg btn-success me-3">
+                        <i class="fa-solid fa-cart-shopping me-3"></i>
+                        Listado de ventas
+                    </a>
+                @endif
                 <a href="{{ route('ventas.factura', $venta->id_venta) }}" class="btn btn-lg btn-azul me-3">
                     <i class="fa-solid fa-file-invoice me-3"></i>
                     {{ $venta->url_pdf == null ? 'Generar factura por primera vez' : 'Volver a generar factura' }}

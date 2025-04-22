@@ -23,13 +23,15 @@
                 </div>
                 <div class="col-12">
                     <div class="d-flex mb-4">
-                        <a href="{{ route('ventas.inicio') }}" class="btn btn-lg {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} me-2">
-                            <i class="fa-solid fa-cart-shopping me-3"></i>
-                        Listado de ventas
-                    </a>
-                </div>
+                        @if(auth()->user()->rol == 1 || auth()->user()->rol == 2)
+                            <a href="{{ route('ventas.inicio') }}" class="btn btn-lg {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} me-2">
+                                <i class="fa-solid fa-cart-shopping me-3"></i>
+                                Listado de ventas
+                            </a>
+                        @endif
                     </div>
                 </div>
+            </div>
         <form method="POST" action="{{ route('ventas.crear.post') }}">
             @csrf
             <input type="hidden" name="tipo_venta" value="{{ $tipoCliente }}">
