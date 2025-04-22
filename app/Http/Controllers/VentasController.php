@@ -58,7 +58,8 @@ class VentasController extends Controller
                 'uuid' => strtoupper(Str::uuid()->toString()),
                 'numero_control' => $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
-                'id_usuario' => auth()->id()
+                'id_usuario' => auth()->id(),
+                'id_sucursal' => env('BODEGA')
 
             ]);
 
