@@ -36,6 +36,7 @@ class VentasController extends Controller
     public function inicio() {
         $ventas = Venta::join('clientes', 'ventas.cliente', '=', 'clientes.id_cliente')
             ->select('ventas.*', 'clientes.nombre as nombre_cliente')
+            ->whereNotNull('ventas.tipo_venta')
             ->get();
 
         return view('operaciones.ventas.inicio', compact('ventas'));
@@ -56,7 +57,9 @@ class VentasController extends Controller
                 'comentarios' => $request->comentarios,
                 'uuid' => strtoupper(Str::uuid()->toString()),
                 'numero_control' => $this->generarNumeroControl($request->tipo_venta),
-                'tipo_venta' => $request->tipo_venta
+                'tipo_venta' => $request->tipo_venta,
+                'id_usuario' => auth()->id()
+
             ]);
 
             // Crear detalles de venta

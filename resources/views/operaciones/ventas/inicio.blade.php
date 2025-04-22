@@ -18,14 +18,15 @@
                 <div class="card-content">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-lg table-striped table-hover" id="paginacion">
+                            <table class="table table-lg table-striped table-hover" id="paginacion2">
                                 <thead class="bg-rojo">
                                     <tr>
                                         <th class="text-white">Cliente</th>
+                                        <th class="text-white">Tipo de venta</th>
                                         <th class="text-white">Total ($)</th>
                                         <th class="text-white">Total + IVA ($)</th>
                                         <th class="text-white">Fecha y hora</th>
-                                        <th class="text-white">Comentarios</th>
+                                        <th class="text-white">Vendedor</th>
                                         <th class="text-white">Opciones</th>
                                     </tr>
                                 </thead>
@@ -33,10 +34,11 @@
                                     @foreach ($ventas as $venta)
                                         <tr>
                                             <td>{{ $venta->nombre_cliente }}</td>
+                                            <td>{{ $venta->tipo_venta == 1 ? 'Consumidor final' : 'Crédito fiscal' }}</td>
                                             <td>${{ number_format($venta->total, 2) }} </td>
                                             <td>${{ number_format($venta->total_iva, 2) }}</td>
                                             <td>{{ date_format(date_create($venta->fecha_hora), "d/m/Y - H:i:s") }}</td>
-                                            <td>{{ $venta->comentarios == '' ? '-' : $venta->comentarios }}</td>
+                                            <td>{{ $venta->user->name == '' ? '-' : $venta->user->name }}</td>
                                             <td>
                                                 <a class="btn btn-success" href="{{ route('ventas.detalle', $venta->id_venta) }}">
                                                     <i class="fa-solid fa-circle-info me-1"></i>
