@@ -11,27 +11,18 @@ const btnsAgregarProducto = document.querySelectorAll('.agregar-producto');
 const inputLector = document.querySelector('#lector-barra');
 const inputBuscarProducto = document.querySelector('#buscar-producto');
 const btnBuscarProducto = document.querySelector('#btn-buscar-producto');
+
 document.addEventListener('DOMContentLoaded', () => {
     const inputMonto = document.querySelector('#monto');
     if (inputMonto) {
-        inputMonto.addEventListener('input', (e) => {
-            let valor = e.target.value.replace(/[^\d]/g, '');
-            let digitos = valor.split('').reverse();
-            digitos = digitos.slice(0, 10);
-            if (digitos.length > 2) digitos.splice(2, 0, '.');
-            e.target.value = digitos.reverse().join('');
-        });
 
         inputMonto.addEventListener('keyup', (e) => {
-            btnVenta.disabled = true;
-            if (!soloNumerosPositivos(e.target.value)) {
-                inputCambio.value = 0;
-            } else if (parseFloat(e.target.value) < parseFloat(inputTotal.value)) {
-                inputCambio.value = 0;
-            } else {
-                calcularCambio(inputTotal.value, e.target.value);
-                btnVenta.disabled = false;
+            let valor = e.target.value;
+            if (!valor.includes('.')) {
+                valor = valor + '.00';
             }
+            calcularCambio(inputTotal.value, valor);
+            btnVenta.disabled = false;
         });
     }
 });
