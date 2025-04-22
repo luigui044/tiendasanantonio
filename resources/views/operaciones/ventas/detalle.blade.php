@@ -59,6 +59,7 @@
                                                 <th class="text-white">Subtotal + IVA ($)</th>
                                                 <th class="text-white">Descuento ($)</th>
                                                 <th class="text-white">Subtotal + IVA con descuento ($)</th>
+                                                <th class="text-white">Excento</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -77,6 +78,7 @@
                                                     </td>
                                                     <td>${{ number_format($detalle->precio_iva * $detalle->cantidad * (1 - $detalle->descuento), 2) }}
                                                     </td>
+                                                    <td>{{ $detalle->elproducto->banexcento == 1 ? 'Si' : 'No' }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>

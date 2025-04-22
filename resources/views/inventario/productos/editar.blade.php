@@ -39,6 +39,22 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <label for="bangranel">Producto a granel:</label>
+                                        <div class="form-group position-relative has-icon-left">
+                                            <input type="checkbox" id="bangranel" name="bangranel" value="1" @if ($producto->bangranel == 1) checked @endif> 
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="banexcento">Producto excento:</label>
+                                        <div class="form-group position-relative has-icon-left">
+                                            <input type="checkbox" id="banexcento" name="banexcento" value="1" @if ($producto->banexcento == 1) checked @endif>
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
                                         <label for="categoria">Categoría:</label>
                                         <fieldset class="form-group">
                                             <select class="form-select" id="categoria" name="categoria">

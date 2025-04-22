@@ -82,9 +82,11 @@ class Inventario extends Controller
         $producto->producto = $request->producto;
         $producto->precio = $request->precio;
         $producto->descuento = $request->descuento / 100;
-        $producto->proveedor = $request->proveedor;
-        $producto->descripcion = $request->descripcion;
-        $producto->categoria = $request->categoria;
+        $producto->bangranel = $request->bangranel;
+        $producto->banexcento = $request->banexcento;
+        // $producto->proveedor = $request->proveedor;
+        // $producto->descripcion = $request->descripcion;
+        // $producto->categoria = $request->categoria;
         $producto->unidad_medida = $request->unidad_medida;
         $producto->unidad_medida_mh = $request->unidad_medida_hacienda;
         $producto->cod_bar = $request->cod_bar;
@@ -107,6 +109,8 @@ class Inventario extends Controller
         $producto =  Producto::findOrFail($id);
         $producto->producto = $request->producto;
         $producto->precio = $request->precio;
+        $producto->bangranel = $request->bangranel;
+        $producto->banexcento = $request->banexcento;
         $producto->descuento = $request->descuento / 100;
         $producto->proveedor = $request->proveedor;
         $producto->descripcion = $request->descripcion;
@@ -301,7 +305,7 @@ class Inventario extends Controller
             
             $actualizar =     TInventario::where('producto',$idProd)->where('ubicacion',$idBod)->firstOrFail(); 
              $actualizar->cantidad = $request->cantidad;
-             $actualizar->unidad_medida = $request->uMedida;
+            //  $actualizar->unidad_medida = $request->uMedida;
             $actualizar->save();
             return back()->with('mensaje', 'Actualización de inventario éxitosa');
 
@@ -311,7 +315,7 @@ class Inventario extends Controller
             $inventario  = new TInventario();
             $inventario->producto  = $idProd;
             $inventario->cantidad = $request->cantidad;
-            $inventario->unidad_medida = $request->uMedida;
+            // $inventario->unidad_medida = $request->uMedida;
             $inventario->ubicacion= $idBod;
             $inventario->save();
     

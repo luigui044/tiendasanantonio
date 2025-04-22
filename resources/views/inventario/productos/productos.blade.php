@@ -38,6 +38,23 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
+                                        <label for="bangranel">Producto a granel:</label>
+                                        <div class="form-group position-relative has-icon-left">
+                                            <input type="checkbox" id="bangranel" name="bangranel" value="1">
+                                        </div>  
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="banexcento">Producto excento:</label>
+                                        <div class="form-group position-relative has-icon-left">
+                                            <input type="checkbox" id="banexcento" name="banexcento" value="1">
+                                        </div>  
+                                    </div>
+                                </div>
+
+                                {{-- <div class="row">
+                                    <div class="col-12">
                                         <label for="categoria">Categoría:</label>
                                         <fieldset class="form-group">
                                             <select class="form-select" id="categoria" name="categoria">
@@ -49,7 +66,7 @@
                                             </select>
                                         </fieldset>
                                     </div>
-                                </div>
+                                </div> --}}
                                 <div class="row">
                                     <div class="col-12">
                                         <label for="precio">Precio ($):</label>
@@ -88,7 +105,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-12">
                                         <label for="proveedor">Proveedor:</label>
                                         <fieldset class="form-group">
@@ -101,8 +118,8 @@
                                             </select>
                                         </fieldset>
                                     </div>
-                                </div>
-                                <div class="row">
+                                </div> --}}
+                                {{-- <div class="row">
                                     <div class="col-12">
                                         <label for="descripcion" class="form-label">
                                             Descripción
@@ -115,7 +132,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="row mt-2">
                                     <div class="col-12">

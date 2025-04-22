@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $bodega
  * @property Carbon|null $fecha_actualizacion
  * @property int $precio
+* @property int $es_granel
  * @package App\Models
  */
 class VInventario extends Model
@@ -35,6 +36,7 @@ class VInventario extends Model
 		'bodega',
 		'fecha_actualizacion',
 		'precio',
-		'descuento'
+		'descuento',
+			'es_granel'
 	];
 }

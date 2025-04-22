@@ -44,12 +44,34 @@
 
                                 <div class="card-content">
                                     <div class="card-body">
-                                        <div class="input-group mb-3">
+                                        <div class="row mb-3">
+                                            <div class="col-12 col-lg-8">
+                                                <select id="select-producto" class="form-control select2">
+                                                    <option value="">Buscar producto por nombre o código...</option>
+                                                    @foreach($productos as $producto)
+                                                        <option value="{{ $producto->cod_bar }}" data-granel="{{ $producto->es_granel    }}" data-precio="{{ $producto->precio }}">      
+                                                            {{ $producto->producto }} - {{ $producto->cod_bar }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                            <div class="col-12 col-lg-2">
+                                                <input type="number" id="cantidad-producto" class="form-control" placeholder="Cantidad" min="0.25" step="0.01" disabled>
+                                            </div>
+                                            <div class="col-12 col-lg-2">
+                                                <button type="button" id="agregar-producto" class="btn btn-primary w-100">
+                                                    <i class="fas fa-plus"></i> Agregar
+                                                </button>
+                                            </div>
+                                        </div>
+                                        {{-- <div class="input-group mb-3">
+
                                             <input type="number" id="buscar-producto" class="form-control" placeholder="Ingrese código de barras">
+
                                             <button class="btn btn-primary" type="button" id="btn-buscar-producto">
                                                 <i class="fas fa-plus"></i>
                                             </button>
-                                        </div>
+                                        </div> --}}
                                         <div class="table-responsive">
                                             <table id="tb-productos-agregados" class="table table-sm table-hover mb-0">
                                                 <thead>

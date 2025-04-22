@@ -166,7 +166,10 @@ class HomeController extends Controller
         $actividades = CatActividadesEconomica::all();
         $bodega = env('BODEGA');
   
-        $productos = VInventario::where('id_bodega', $bodega)->where('cantidad', '>', 0)->get();
+        $productos = VInventario::where('id_bodega', $bodega)
+            ->where('cantidad', '>', 0)
+            ->orWhere('es_granel', 1)
+            ->get();
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes', 'tipoCliente', 'departamentos', 'actividades' ));
     }
 

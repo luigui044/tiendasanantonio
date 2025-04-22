@@ -46,7 +46,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                    <div class="col-12 col-lg-3">
+                                    {{-- <div class="col-12 col-lg-3">
                                         <label for="uMedida">Unidad de medida:</label>
                                         <div class="form-group position-relative has-icon-left">
                                             <input type="text"
@@ -62,7 +62,7 @@
                                                 {{ $message }}
                                             </div>
                                         @enderror
-                                    </div>
+                                    </div> --}}
                                     <div class="col-12 col-lg-3">
                                         <label for="categoria">Seleccione una ubicación:</label>
                                         <fieldset class="form-group">

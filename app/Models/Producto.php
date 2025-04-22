@@ -23,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $descuento
  * @property Proveedore $proveedore
  * @property CateProducto $cate_producto
+ * @property int $bangranel	
+ * @property int $banexcento
  *
  * @package App\Models
  */
@@ -48,7 +50,9 @@ class Producto extends Model
 		'categoria',
 		'unidad_medida',
 		'unidad_medida_mh',
-		'cod_bar'
+		'cod_bar',
+		'bangranel',
+		'banexcento'
 		
 	];
 

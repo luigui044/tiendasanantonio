@@ -11,6 +11,7 @@ const btnsAgregarProducto = document.querySelectorAll('.agregar-producto');
 const inputLector = document.querySelector('#lector-barra');
 const inputBuscarProducto = document.querySelector('#buscar-producto');
 const btnBuscarProducto = document.querySelector('#btn-buscar-producto');
+const selectProducto = document.querySelector('#select-producto');
 
 document.addEventListener('DOMContentLoaded', () => {
     const inputMonto = document.querySelector('#monto');
@@ -25,6 +26,57 @@ document.addEventListener('DOMContentLoaded', () => {
             btnVenta.disabled = false;
         });
     }
+});
+
+$('#select-producto').on('change', function () {
+    const esGranel = $(this).find(':selected').data('granel');
+    const cantidadInput = $('#cantidad-producto');
+    cantidadInput.prop('disabled', esGranel !== 1);
+    if (esGranel !== 1) {
+        cantidadInput.val('');
+    }
+});
+
+// Agregar producto desde el select
+document.querySelector('#agregar-producto').addEventListener('click', () => {
+    const productoSeleccionado = $('#select-producto').find(':selected');
+    const codigoBarras = productoSeleccionado.val();
+    const cantidadInput = document.querySelector('#cantidad-producto');
+
+    if (!codigoBarras) {
+        return;
+    }
+
+    const producto = productosDisponibles.find(p => p.cod_bar === codigoBarras);
+
+    if (!producto) {
+        return;
+    }
+
+    if (producto.es_granel === 1) {
+        const cantidad = parseFloat(cantidadInput.value);
+        if (!cantidad || cantidad <= 0) {
+            alert('Ingrese una cantidad válida para productos a granel');
+            return;
+        }
+        producto.cantidad = cantidad;
+    }
+
+    agregarProducto(producto);
+
+    // Limpiar selección y cantidad
+    $('#select-producto').val('').trigger('change');
+    document.querySelector('#cantidad-producto').value = '';
+    document.querySelector('#cantidad-producto').disabled = true;
+});
+
+// Inicializar Select2
+$(document).ready(function () {
+    $('#select-producto').select2({
+        placeholder: "Buscar producto por nombre o código...",
+        allowClear: true,
+        width: '100%'
+    });
 });
 
 
@@ -58,13 +110,17 @@ function soloNumerosPositivos(valor) {
 
 // Función para calcular subtotal de una fila
 function calcularSubtotalFila(fila) {
-    console.log(fila);
+
     const precio = parseFloat(eliminarSignoDolar(fila.querySelector('.precio').textContent));
+    console.log(precio);
     const descuento = parseFloat(eliminarPorcentaje(fila.querySelector('.descuento').textContent)) / 100;
-    const cantidad = parseInt(fila.querySelector('.cantidad').value);
+    console.log(descuento);
+    const cantidad = parseFloat(fila.querySelector('.cantidad').value);
+    console.log(cantidad);
 
     const subtotal = precio * (1 - descuento) * cantidad;
-    fila.querySelector('.subtotal').textContent = `$${subtotal}`;
+
+    fila.querySelector('.subtotal').textContent = `$${subtotal.toFixed(2)}`;
 }
 
 const calcularPorcentajeDescuento = (precio, descuento) => {
@@ -72,25 +128,38 @@ const calcularPorcentajeDescuento = (precio, descuento) => {
 };
 
 function agregarProducto(producto) {
-    if (!sumarProductosExistentes(producto)) {
+    console.log(producto);
 
+    // Si no trae cantidad, asignar 1 por defecto
+    if (!producto.cantidad || isNaN(producto.cantidad)) {
+        producto.cantidad = 1;
+    }
+    console.log(producto.cantidad);
+    // Intentar sumar a producto existente
+    if (sumarProductosExistentes(producto)) {
+        calcularTotal();
+        return;
+    }
+
+    // Validar si el producto tiene cantidad y es a granel
+    if (!Number.isInteger(producto.cantidad)) {
+        // Es producto a granel, usar la cantidad especificada
+        const cantidad = producto.cantidad;
         let cuerpoTabla = document.querySelector('#tb-productos-agregados tbody'),
             tr = document.createElement('tr'),
             precio = parseFloat(producto.precio),
             descuento = (producto.descuento / 100).toFixed(2),
 
-
             td0 = crearElemento('td', 'id-producto-agregado', producto.cod_bar),
-
             td1 = crearElemento('td', 'cantidad-agregada', null),
             td2 = crearElemento('td', null, producto.producto),
-            td6 = crearElemento('td', null, producto.precio),
+            td6 = crearElemento('td', null, `$${precio}`),
             td3 = crearElemento('td', 'descuento', null),
-            td4 = crearElemento('td', 'subtotal', `$${calcularSubtotal(precio, descuento, 1)}`),
+            td4 = crearElemento('td', 'subtotal', `$${calcularSubtotal(precio, descuento, cantidad)}`),
             td5 = document.createElement('td'),
 
             div = crearElemento('div', 'div-cantidad', null),
-            inputCantidad = crearInput('number', 'form-control cantidad', null, 1),
+            inputCantidad = crearInput('number', 'form-control cantidad', null, cantidad),
             button = crearElemento('button', 'eliminar-producto', null),
             btnDescuento = crearElemento('button', 'btn-descuento', null),
             iconoDescuento = crearElemento('i', 'fa-solid fa-percent ms-2', null),
@@ -98,11 +167,12 @@ function agregarProducto(producto) {
             inputHidden = crearInput('hidden',
                 'input-producto',
                 `producto[${producto.cod_bar}]`,
-                `${producto.cod_bar};1;${precio};${descuento}`),
+                `${producto.cod_bar};${cantidad};${precio};${descuento}`),
             i = crearElemento('i', 'fa-solid fa-trash-can', null),
             datosProducto;
 
-        inputCantidad.min = 0;
+        inputCantidad.min = 0.25;
+        inputCantidad.step = '0.01'; // Permitir decimales para productos a granel
         div.appendChild(inputCantidad);
         td1.appendChild(div);
         button.type = 'button';
@@ -114,42 +184,35 @@ function agregarProducto(producto) {
         btnDescuento.appendChild(porcentaje);
         btnDescuento.appendChild(iconoDescuento);
         td3.appendChild(btnDescuento);
-        td5.appendChild(button); // Agrega el botón de eliminar a la última celda
+        td5.appendChild(button);
 
-        tr.appendChild(td1); // Celda con el input de cantidad
-        tr.appendChild(td2); // Celda con el nombre del producto
-        tr.appendChild(td0); // Celda con el código de barras del producto
-        tr.appendChild(td6); // Celda con el precio del producto
-        tr.appendChild(td3); // Celda con el botón de descuento
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td0);
+        tr.appendChild(td6);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        tr.appendChild(inputHidden);
 
-        tr.appendChild(td4); // Celda con el subtotal
-        tr.appendChild(td5); // Celda con el botón de eliminar
-        tr.appendChild(inputHidden); // Input oculto con datos del producto
-
-        // Agregando fila de producto a la tabla
         cuerpoTabla.appendChild(tr);
 
-        // Agregando eventos 
         const actualizarDatos = () => {
-            if (!soloNumerosEnterosPositivos(inputCantidad.value)) {
+            if (!soloNumerosPositivos(inputCantidad.value)) {
                 inputCantidad.value = '';
             }
 
-            // Actualizando la cantidad de producto
             datosProducto = inputHidden.value.split(';');
-            // Cantidad de producto
             datosProducto[1] = inputCantidad.value;
             td4.textContent = '$' + calcularSubtotal(precio, datosProducto[3], inputCantidad.value);
             inputHidden.value = datosProducto.join(';');
         };
 
-        // Agregando función de eliminar producto al botón
         button.addEventListener('click', () => {
             eliminarProducto(button);
             calcularTotal();
         });
 
-        // Agregando validación al input de cantidad de producto
         inputCantidad.addEventListener('change', () => {
             actualizarDatos();
             calcularTotal();
@@ -159,7 +222,97 @@ function agregarProducto(producto) {
             calcularTotal();
         });
 
-        // Agregando validación de precio en modal de descuento
+        btnDescuento.addEventListener('click', () => {
+            inputsDescuento({
+                nombre: producto.producto,
+                precio: precio,
+                descuento: btnDescuento.firstChild,
+                input: inputHidden,
+                cantidad: inputCantidad.value,
+                subtotal: td4
+            });
+        });
+    } else {
+        // Producto normal
+        console.log(producto)
+
+        let cuerpoTabla = document.querySelector('#tb-productos-agregados tbody'),
+            tr = document.createElement('tr'),
+            precio = parseFloat(producto.precio).toFixed(2),
+            descuento = (producto.descuento / 100).toFixed(2),
+
+            td0 = crearElemento('td', 'id-producto-agregado', producto.cod_bar),
+            td1 = crearElemento('td', 'cantidad-agregada', null),
+            td2 = crearElemento('td', null, producto.producto),
+            td6 = crearElemento('td', null, precio),
+            td3 = crearElemento('td', 'descuento', null),
+            td4 = crearElemento('td', 'subtotal', `$${calcularSubtotal(precio, descuento, 1)}`),
+            td5 = document.createElement('td'),
+
+            div = crearElemento('div', 'div-cantidad', null),
+            inputCantidad = crearInput('number', 'form-control cantidad', null, 1), // Valor por defecto 1
+            button = crearElemento('button', 'eliminar-producto', null),
+            btnDescuento = crearElemento('button', 'btn-descuento', null),
+            iconoDescuento = crearElemento('i', 'fa-solid fa-percent ms-2', null),
+            porcentaje = document.createTextNode(producto.descuento),
+            inputHidden = crearInput('hidden',
+                'input-producto',
+                `producto[${producto.cod_bar}]`,
+                `${producto.cod_bar};${1};${precio};${descuento}`),
+            i = crearElemento('i', 'fa-solid fa-trash-can', null),
+            datosProducto;
+
+        inputCantidad.min = 1;
+        inputCantidad.value = 1; // Asegurar valor mínimo de 1
+        div.appendChild(inputCantidad);
+        td1.appendChild(div);
+        button.type = 'button';
+        button.appendChild(i);
+        btnDescuento.type = 'button';
+        btnDescuento.id = `btn-descuento-${producto.id_prod}`;
+        btnDescuento.setAttribute('data-bs-toggle', 'modal');
+        btnDescuento.setAttribute('data-bs-target', '#modal-descuento');
+        btnDescuento.appendChild(porcentaje);
+        btnDescuento.appendChild(iconoDescuento);
+        td3.appendChild(btnDescuento);
+        td5.appendChild(button);
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td0);
+        tr.appendChild(td6);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tr.appendChild(td5);
+        tr.appendChild(inputHidden);
+
+        cuerpoTabla.appendChild(tr);
+
+        const actualizarDatos = () => {
+            if (!soloNumerosEnterosPositivos(inputCantidad.value)) {
+                inputCantidad.value = '1'; // Valor por defecto 1 si es inválido
+            }
+
+            datosProducto = inputHidden.value.split(';');
+            datosProducto[1] = inputCantidad.value;
+            td4.textContent = '$' + calcularSubtotal(precio, datosProducto[3], inputCantidad.value);
+            inputHidden.value = datosProducto.join(';');
+        };
+
+        button.addEventListener('click', () => {
+            eliminarProducto(button);
+            calcularTotal();
+        });
+
+        inputCantidad.addEventListener('change', () => {
+            actualizarDatos();
+            calcularTotal();
+        });
+        inputCantidad.addEventListener('keyup', () => {
+            actualizarDatos();
+            calcularTotal();
+        });
+
         btnDescuento.addEventListener('click', () => {
             inputsDescuento({
                 nombre: producto.producto,
@@ -197,11 +350,11 @@ function crearInput(tipo, clase, name, valor) {
     return input;
 }
 
-btnBuscarProducto.addEventListener('click', () => {
-    const codigo = inputBuscarProducto.value.trim();
-    inputBuscarProducto.value = '';
-    if (codigo) buscarProductoPorCodigo(codigo);
-});
+// btnBuscarProducto.addEventListener('click', () => {
+//     const codigo = inputBuscarProducto.value.trim();
+//     inputBuscarProducto.value = '';
+//     if (codigo) buscarProductoPorCodigo(codigo);
+// });
 
 function buscarProductoPorCodigo(codigo) {
     fetch(`/producto/${codigo}`)
@@ -233,10 +386,12 @@ const inputsDescuento = (producto) => {
     const tituloModal = document.querySelector('#titulo-descuento');
     const precioModal = document.querySelector('#precio-descuento')
     const btnDescuento = document.querySelector('#aplicar-descuento');
+    const precio = parseFloat(producto['precio']);
 
     // Se desactiva por defecto el boton de aplicar descuento, se activa hasta que haya ingresado datos correctos
     tituloModal.textContent = `Aplicar descuento a: ${producto['nombre']}`;
-    precioModal.textContent = `Precio: $${producto['precio'].toFixed(2)}`;
+
+    precioModal.textContent = `Precio: $${precio.toFixed(2)}`;
     desc2.value = producto['descuento'].nodeValue;
     desc1.value = calcularDescuentoEnDinero(producto['precio'], desc2.value);
 
@@ -296,6 +451,7 @@ const inputsDescuento = (producto) => {
     validarDesc2();
 
     desc1.addEventListener('keyup', () => {
+        console.log(desc1.value);
         activarBotonDescuento(validarDesc1());
     });
 

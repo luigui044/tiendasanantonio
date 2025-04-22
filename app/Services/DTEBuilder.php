@@ -106,12 +106,13 @@ class DTEBuilder
             ];
 
             foreach($venta->detalles as $index => $detalle) {
-                $json["dteJson"]["cuerpoDocumento"][] = [
-                    "numItem" => $index + 1,
-                    "tipoItem" => 2,
-                    "numeroDocumento" => null,
-                    "codigo" => $detalle->elproducto->cod_bar,
-                    "codTributo" => null,
+                if($detalle->elproducto->banexcento == 0) {
+                    $json["dteJson"]["cuerpoDocumento"][] = [
+                        "numItem" => $index + 1,
+                        "tipoItem" => 2,
+                        "numeroDocumento" => null,
+                        "codigo" => $detalle->elproducto->cod_bar,
+                        "codTributo" => null,
                     "cantidad" => $detalle->cantidad,
                     "uniMedida" => $detalle->elproducto->unidad_medida_mh,
                     "descripcion" => $detalle->elproducto->producto,
@@ -124,7 +125,8 @@ class DTEBuilder
                     "psv" => 0.0,
                     "noGravado" => 0.0,
                     "ivaItem" => round( ($detalle->precio_iva - $detalle->precio) * $detalle->cantidad, 2)
-                ];
+                    ];
+                }
             }
       
 
