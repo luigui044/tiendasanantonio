@@ -21,7 +21,8 @@
                                     <div class="col-12 col-lg-3">
                                         <label for="categoria">Seleccione un producto:</label>
                                         <fieldset class="form-group">
-                                            <select class="form-select" id="producto" name="producto">
+                                            <select class="form-select select2" id="producto" name="producto" data-placeholder="Seleccione un producto">
+                                                <option></option>
                                                 @foreach ($productos as $item)
                                                     <option value="{{ $item->id_prod }}">{{ $item->producto }}</option>
                                                 @endforeach
@@ -65,7 +66,7 @@
                                     <div class="col-12 col-lg-3">
                                         <label for="categoria">Seleccione una ubicación:</label>
                                         <fieldset class="form-group">
-                                            <select class="form-select" id="ubicacion" name="ubicacion">
+                                            <select class="form-select select2" id="ubicacion" name="ubicacion" data-placeholder="Seleccione una ubicación">
                                                 @foreach ($bodegas as $item)
                                                     <option value="{{ $item->id_bodega }}">{{ $item->bodega }}</option>
                                                 @endforeach
@@ -122,3 +123,11 @@
         </div>
     </section>
 @endsection
+
+@section('scripts')
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
+@endsection                                                                                                                                                                                 

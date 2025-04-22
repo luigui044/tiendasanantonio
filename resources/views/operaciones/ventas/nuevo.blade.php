@@ -52,7 +52,7 @@
                                                                 required>
                                                                 <option value="">Seleccione un cliente:</option>
                                                                 @foreach ($clientes as $cliente)
-                                                                    <option value="{{ $cliente->id_cliente }}">
+                                                                    <option value="{{ $cliente->id_cliente }}" {{ ($tipoCliente == 1 && $cliente->id_cliente == 19) ? 'selected' : '' }}>
                                                                         {{ $cliente->nombre }}
                                                                     </option>
                                                                 @endforeach
