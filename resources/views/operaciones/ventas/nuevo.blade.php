@@ -37,57 +37,9 @@
             <input type="hidden" name="tipo_venta" value="{{ $tipoCliente }}">
                     <div class="row mt-1" id="paso1">
                         <div class="col-12">
-                            <div class="card" style="padding-left: 0px; padding-right: 0px;">
-                                <div class="card-header">
-                                    <h4 class="card-title">Paso 1: Información de la venta</h4>
-                            </div>
-                            <div class="card-content">
-                                <div class="card-body">
-                                    <div class="form form-horizontal">
-                                        <div class="form-body">
-                                            <div class="row">
-                                                @if (count($clientes) > 0)
-                                                    <div class="col-4 col-lg-6">
-                                                        <label for="cliente">Cliente:</label>
-                                                        <fieldset class="form-group">
-                                                            <select name="cliente" id="cliente" class="form-control"
-                                                                required>
-                                                                <option value="">Seleccione un cliente:</option>
-                                                                @foreach ($clientes as $cliente)
-                                                                    <option value="{{ $cliente->id_cliente }}" {{ ($tipoCliente == 1 && $cliente->id_cliente == 19) ? 'selected' : '' }}>
-                                                                        {{ $cliente->nombre }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </fieldset>
-                                                    </div>
-                                                @endif
-                                                <div class="col-4 col-lg-6">
-                                                     <div    class="d-flex justify-content-center">
-                                                        <a class="btn {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} " data-bs-toggle="modal" data-bs-target="#modal-nuevo-cliente">
-                                                            <i class="fa-solid fa-user-plus me-2"></i>
-                                                            Agregar nuevo cliente
-                                                        </a>
-                                                     </div>
-                                                </div>
-
-                                            </div>
-                                            <div class="d-flex justify-content-end mt-3">
-                                                <button type="button" class="btn btn-primary" id="continuar-paso1">Continuar</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-
-                    <div class="row mt-4" id="paso2" style="display:none;">
-                        <div class="col-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title">Paso 2: Lista de compra</h4> 
+                                    <h4 class="card-title">Paso 1: Lista de compra</h4> 
                                 </div>
 
                                 <div class="card-content">
@@ -116,8 +68,7 @@
                                             </table>
                                         </div>
                                         <div class="d-flex justify-content-between mt-3">
-                                            <button type="button" class="btn btn-secondary" id="anterior-paso2">Anterior</button>
-                                            <button type="button" class="btn btn-primary" id="continuar-paso2">Continuar</button>
+                                            <button type="button" class="btn btn-primary" id="continuar-paso1">Continuar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -125,31 +76,59 @@
                         </div>
                     </div>
 
-                    <div class="card" id="paso3" style="display:none;">
-                        <div class="card-header">
-                            <h4 class="card-title">Paso 3: Finalizar venta</h4>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-12 col-md-4 mb-3">
-                                    <label for="total">Total: ($)</label>
-                                    <input type="text" id="total" name="total" class="form-control" placeholder="0.00" required readonly>
+                    <div class="row mt-4" id="paso2" style="display:none;">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Paso 2: Finalizar venta</h4>
                                 </div>
-                                <div class="col-12 col-md-4 mb-3">
-                                    <label for="monto">Monto entregado: ($)</label>
-                                    <input type="number" step="0.01" id="monto" name="monto" class="form-control" placeholder="0.00" required disabled>
-                                </div>
-                                <div class="col-12 col-md-4 mb-3">
-                                    <label for="cambio">Cambio: ($)</label>
-                                    <input type="text" id="cambio" name="cambio" class="form-control" placeholder="0.00" readonly>
-                                </div>
-                                <div class="col-12">
-                                    <div class="d-flex justify-content-between">
-                                        <button type="button" class="btn btn-secondary" id="anterior-paso3">Anterior</button>
-                                        <button type="submit" id="realizar-venta" class="btn btn-lg btn-primary" disabled>
-                                            <i class="fa-solid fa-basket-shopping me-3"></i>
-                                            Realizar venta
-                                        </button>
+                                <div class="card-body">
+                                    <div class="row">
+                                        @if (count($clientes) > 0)
+                                            <div class="col-4 col-lg-6">
+                                                <label for="cliente">Cliente:</label>
+                                                <fieldset class="form-group">
+                                                    <select name="cliente" id="cliente" class="form-control"
+                                                        required>
+                                                        <option value="">Seleccione un cliente:</option>
+                                                        @foreach ($clientes as $cliente)
+                                                            <option value="{{ $cliente->id_cliente }}" {{ ($tipoCliente == 1 && $cliente->id_cliente == 19) ? 'selected' : '' }}>
+                                                                {{ $cliente->nombre }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </fieldset>
+                                            </div>
+                                        @endif
+                                        <div class="col-4 col-lg-6">
+                                             <div class="d-flex justify-content-center">
+                                                <a class="btn {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} " data-bs-toggle="modal" data-bs-target="#modal-nuevo-cliente">
+                                                    <i class="fa-solid fa-user-plus me-2"></i>
+                                                    Agregar nuevo cliente
+                                                </a>
+                                             </div>
+                                        </div>
+                                        <div class="col-12 col-md-4 mb-3">
+                                            <label for="total">Total: ($)</label>
+                                            <input type="text" id="total" name="total" class="form-control" placeholder="0.00" required readonly>
+                                        </div>
+                                        <div class="col-12 col-md-4 mb-3">
+                                            <label for="monto">Monto entregado: ($)</label>
+                                            <input type="number" step="0.01" id="monto" name="monto" class="form-control" placeholder="0.00" required disabled>
+                                        </div>
+                                        <div class="col-12 col-md-4 mb-3">
+                                            <label for="cambio">Cambio: ($)</label>
+                                            <input type="text" id="cambio" name="cambio" class="form-control" placeholder="0.00" readonly>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="d-flex justify-content-between">
+                                                <button type="button" class="btn btn-secondary" id="anterior-paso2">Anterior</button>
+                                                <button type="submit" id="realizar-venta" class="btn btn-lg btn-primary" disabled>
+                                                    <i class="fa-solid fa-basket-shopping me-3"></i>
+                                                    Realizar venta
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -225,16 +204,6 @@
         document.getElementById('anterior-paso2').addEventListener('click', function() {
             document.getElementById('paso2').style.display = 'none';
             document.getElementById('paso1').style.display = 'block';
-        });
-
-        document.getElementById('continuar-paso2').addEventListener('click', function() {
-            document.getElementById('paso2').style.display = 'none';
-            document.getElementById('paso3').style.display = 'block';
-        });
-
-        document.getElementById('anterior-paso3').addEventListener('click', function() {
-            document.getElementById('paso3').style.display = 'none';
-            document.getElementById('paso2').style.display = 'block';
         });
     </script>
     <script type="text/javascript" src="{{ asset('assets/js/pages/codigo-barras.js') }}"></script>
