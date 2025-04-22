@@ -102,32 +102,7 @@
 
 @section('scripts')
         <script>
-    //    function imprimirConRawBT(idVenta) {
-    //       fetch(`/ventas/ticket/${idVenta}`)
-    //            .then(res => res.text())
-    //            .then(ticketText => {
-    //                // Asegúrate de que ticketText sea texto plano con los saltos de línea correctos
-    //                var logoPath = "{{ asset('assets/logo3.png') }}";
-
-    //                fetch(logoPath)
-    //                    .then(res => res.blob())
-    //                    .then(blob => {
-    //                        var reader = new FileReader();
-    //                        reader.readAsDataURL(blob);
-    //                        reader.onloadend = function () {
-    //                            // Aquí mandas el contenido del ticket sin alterarlo
-    //                            var intent = "intent:" + ticketText +
-    //                                "#Intent;scheme=rawbt;package=ru.a402d.rawbtprinter;end;";
-
-    //                            // Llamar RawBT
-    //                            window.location.href = intent;
-    //                        };
-    //                    });
-    //            });
-
-    //     }
-
-
+  
 
 
         function imprimirConRawBT(idVenta) {
