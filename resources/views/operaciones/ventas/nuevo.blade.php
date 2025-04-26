@@ -215,7 +215,7 @@
 
 @section('scripts')
     <script>
-        const productosDisponibles = @json($productos);
+        let productosDisponibles = @json($productos);
 
         // Manejo de pasos
         document.getElementById('continuar-paso1').addEventListener('click', function() {

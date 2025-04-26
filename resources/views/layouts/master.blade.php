@@ -11,6 +11,9 @@
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
     <title>@yield('titulo') | Tienda San Antonio</title>
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+
     @yield('csrf')
     @include('layouts.styles')
 </head>
@@ -23,7 +26,7 @@
         @include('layouts.componentes.boton-sidebar')
         @yield('contenido')
     </div>
-    
+
     @include('layouts.scripts')
     @include('partials.mensajes')
 </body>
