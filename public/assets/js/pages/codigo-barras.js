@@ -10,7 +10,7 @@ const clienteNuevo = document.querySelector('#cliente-nuevo');
 const btnsAgregarProducto = document.querySelectorAll('.agregar-producto');
 const inputLector = document.querySelector('#lector-barra');
 const inputBuscarProducto = document.querySelector('#buscar-producto');
-const btnBuscarProducto = document.querySelector('#btn-buscar-producto');
+// const btnBuscarProducto = document.querySelector('#btn-buscar-producto');
 const selectProducto = document.querySelector('#select-producto');
 
 document.addEventListener('DOMContentLoaded', () => {
