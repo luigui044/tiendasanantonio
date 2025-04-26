@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
-                                        <label for="banexcento">Producto excento:</label>
+                                        <label for="banexcento">Producto sencillo:</label>
                                         <div class="form-group position-relative has-icon-left">
                                             <input type="checkbox" id="banexcento" name="banexcento" value="1">
                                         </div>  
