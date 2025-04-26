@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon|null $fecha_expiracion_certificado
  * @property string|null $url_firmador
  * @property string|null $password_firmador
+ * @property string|null $celular_empresa
  *
  * @package App\Models
  */
@@ -101,6 +102,7 @@ class TEmpresa extends Model
 		'certificado_digital',
 		'fecha_expiracion_certificado',
 		'url_firmador',
-		'password_firmador'
+		'password_firmador',
+		'celular_empresa'
 	];
 }

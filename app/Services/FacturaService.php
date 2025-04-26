@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Venta;
 use App\Models\Factura;
+use App\Models\TEmpresa;
 use Dompdf\Dompdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Illuminate\Support\Facades\Log;
@@ -16,8 +17,8 @@ class FacturaService
             // Si ya existe el PDF, retornar la ruta
             if ($venta->url_pdf) {
                 return storage_path('app/public/' . $venta->url_pdf);
-            }
-
+            }   
+            $empresa = TEmpresa::first();
             $factura = Factura::where('id_venta', $venta->id_venta)->first();
 
             if ($factura === null) {
@@ -37,7 +38,7 @@ class FacturaService
             $logoBase64 = base64_encode(file_get_contents($logoPath));
 
             // Generar URL para el QR
-            $urlFactura = route('ventas.detalle', $venta->id_venta);
+            $urlFactura = 'https://admin.factura.gob.sv/consultaPublica?ambiente='.env('AMBIENTE_DTE').'&codGen='.$venta->uuid.'&fechaEmi='.date_format(date_create($venta->fecha_hora), 'Y-m-d');
             
             // Generar QR como base64
             $qrCode = QrCode::format('png')
@@ -47,8 +48,8 @@ class FacturaService
             $qrBase64 = base64_encode($qrCode);
 
             $pdf = new Dompdf();
-            $pdf->loadHtml(view('operaciones.recibos.venta', compact('venta', 'logoBase64', 'qrBase64'))->render());    
-            $pdf->setPaper([0, 0, 164.409, 950.394], 'portrait');
+            $pdf->loadHtml(view('operaciones.recibos.venta', compact('empresa', 'venta', 'logoBase64', 'qrBase64'))->render());    
+            $pdf->setPaper([0, 0, 141.732, 950.394], 'portrait'); // 50mm x 335mm
             $pdf->render();
 
             // Generar nombre único para el archivo PDF

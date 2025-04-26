@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id_detalle
  * @property int|null $id_venta
  * @property int|null $producto
- * @property int|null $cantidad
+ * @property float|null $cantidad
  * @property float|null $precio
  * @property float|null $descuento
  * @property float|null $precio_iva
@@ -32,7 +32,7 @@ class DetalleVenta extends Model
 	protected $casts = [
 		'id_venta' => 'int',
 		'producto' => 'int',
-		'cantidad' => 'int',
+		'cantidad' => 'float',
 		'precio' => 'float',
 		'descuento' => 'float',
 		'precio_iva' => 'float'
