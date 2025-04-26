@@ -32,6 +32,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id_usuario
  * @property int $id_sucursal
  * @property int $tipo_venta
+ * @property float|null $iva
+ * @property float|null $iva_percibido
  *
  * @package App\Models
  */
@@ -63,7 +65,9 @@ class Venta extends Model
 		'url_pdf',
 		'id_usuario',
 		'id_sucursal',
-		'tipo_venta'
+		'tipo_venta',
+		'iva',
+		'iva_percibido'
 	];
 
 	public function elcliente()

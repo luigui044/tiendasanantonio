@@ -185,9 +185,22 @@ $parte2Str = implode(' ', $parte2);
 
     <div class="total">
         <p><b>--------------------------------</b></p>
-        <p><b>Subtotal: ${{ number_format($venta->total_iva, 2) }}</b></p>
-        <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p>
-        <p><b>TOTAL: ${{ number_format($venta->total_iva - $descuentos, 2) }}</b></p>
+        @if($venta->elcliente->tipo_cliente == '1')
+            <p><b>Subtotal: ${{ number_format($venta->total_iva, 2) }}</b></p>
+            <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p>
+            <p><b>TOTAL: ${{ number_format($venta->total_iva - $descuentos, 2) }}</b></p>
+        @else
+            <p><b>Sumas: ${{ number_format($venta->total, 2) }}</b></p>
+            <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p>
+            <p><b>Subtotal: ${{ number_format($venta->total - $descuentos, 2) }}</b></p>
+            <p><b>IVA 13%: ${{ number_format(($venta->total - $descuentos) * 0.13, 2) }}</b></p>
+            @if($venta->total - $descuentos >= 100)
+                <p><b>IVA Percibido 1%: ${{ number_format(($venta->total - $descuentos) * 0.01, 2) }}</b></p>
+                <p><b>TOTAL: ${{ number_format(($venta->total_iva - $descuentos) + (($venta->total - $descuentos) * 0.01), 2) }}</b></p>
+            @else
+                <p><b>TOTAL: ${{ number_format(($venta->total_iva    - $descuentos), 2) }}</b></p>
+            @endif
+        @endif
         <p><b>--------------------------------</b></p>
     </div>
 

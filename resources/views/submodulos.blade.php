@@ -5,6 +5,7 @@
 @section('contenido')
     <div class="row justify-content-center flex-wrap p-5">
         @foreach ($submodulos as $item)
+            @if ($item->id_modulo != 14 || auth()->user()->rol == 1)
             <div class="col-12 col-sm-8 col-md-4 col-lg-4 mb-4 mw">
                 <!-- Card -->
                 <div class="card submodulo">
@@ -34,5 +35,6 @@
                 </div>
                 <!-- Card -->
             </div>
+            @endif
         @endforeach
 @endsection

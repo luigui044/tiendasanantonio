@@ -12,6 +12,7 @@
 
     <title>@yield('titulo') | Tienda San Antonio</title>
     @yield('csrf')
+    
     @include('layouts.styles')
 </head>
 

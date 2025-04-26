@@ -1,7 +1,9 @@
 @extends('layouts.master')
 
 @section('titulo', 'Productos')
-
+@section('csrf')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+@endsection
 @section('contenido')
     <section class="contenedor-personalizado">
         <div class="row match-height">
@@ -217,18 +219,29 @@
                                     </thead>
                                     <tbody>
                                         @foreach ($productos as $item)
-                                            <tr>
+                                            <tr id="producto-{{ $item->id_prod }}">
                                                 <td>{{ $item->cod_bar }}</td>
                                                 <td>{{ $item->producto }}</td>
                                                 <td>${{ number_format($item->precio, 2) }}</td>
                                                 <td>{{ $item->descripcion }}</td>
                                                  <td>{{ $item->unidad_medida }}</td>
                                                 <td>
-                                                    <div class="d-flex">
+                                                    <div class="d-flex gap-2">
                                                         <a href="{{ route('detaProd', $item->id_prod) }}"
-                                                            class="btn btn-success">
-                                                            <i class="fa-regular fa-pen-to-square me-2"></i>
-                                                            Editar
+                                                            class="btn btn-success"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Editar el producto">
+                                                            <i class="fa-regular fa-pen-to-square"></i>
+                                                        </a>
+                                                       
+                                                        <a type="button" 
+                                                            class="btn btn-danger eliminar-producto" 
+                                                            onclick="eliminarProducto( {{ $item->id_prod }})"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Eliminar el producto">
+                                                            <i class="fa-solid fa-trash-can"></i>
                                                         </a>
                                                     </div>
                                                 </td>
@@ -246,3 +259,57 @@
     </section>
 @endsection
 
+@section('scripts')
+    <script>
+        function eliminarProducto(id) {
+                console.log(id);
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: '¿Quieres eliminar este producto?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Sí, eliminar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch(`/prod/eliminar/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire(
+                                        '¡Eliminado!',
+                                        'Producto eliminado correctamente',
+                                        'success'
+                                    ).then(() => {
+                                        document.getElementById(`producto-${id}`).remove();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error',
+                                        'Error al eliminar el producto',
+                                        'error'
+                                    );
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error al eliminar el producto:', error);
+                                Swal.fire(
+                                    'Error',
+                                    'Ha ocurrido un error al procesar la solicitud',
+                                    'error'
+                                );
+                            });
+                    }
+                });
+            }
+
+
+    </script>
+@endsection

@@ -47,7 +47,7 @@ Route::put('editProv/{idProv}',[Inventario::class,'editProv'])->name('editProv')
 Route::post('addProd',[Inventario::class,'addProd'])->name('addProd');
 Route::get('modProd/{id}',[Inventario::class,'detaProd'])->name('detaProd');
 Route::put('modProd/{id}',[Inventario::class,'modProd'])->name('modProd');
-
+Route::delete('prod/eliminar/{id}', [Inventario::class, 'eliminarProducto'])->name('prod.eliminar');
 
 Route::post('addCate',[Inventario::class,'addCate'])->name('addCate');
 Route::get('modCate/{id}',[Inventario::class,'detaCate'])->name('detaCate');

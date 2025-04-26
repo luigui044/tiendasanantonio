@@ -121,6 +121,16 @@ class Inventario extends Controller
 
 
     }
+
+    public function eliminarProducto($id) {
+        $producto = Producto::findOrFail($id);
+        $producto->delete();
+        return response()->json([
+            'success' => true,
+            'mensaje' => 'Producto eliminado éxitosamente'
+        ]);
+    }
+
     public function addCate(Request $request)
     {
         $request->validate([

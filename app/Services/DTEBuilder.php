@@ -62,15 +62,15 @@ class DTEBuilder
                         "correo" => $empresa->correo_empresa
                     ],
                     "receptor" => [
-                        "nombre" => $venta->elcliente->nombre,
-                        "tipoDocumento" => "13",
-                        "numDocumento" => $venta->elcliente->dui,
+                        "nombre" => $venta->elcliente->dui != '00000000-0'   ? $venta->elcliente->nombre : null,
+                        "tipoDocumento" => $venta->elcliente->dui != '00000000-0' ? '13' : null,
+                        "numDocumento" => $venta->elcliente->dui != '00000000-0' ? $venta->elcliente->dui : null,
                         "nrc" => $venta->elcliente->credito_fiscal ? $venta->elcliente->credito_fiscal : null,
-                        "codActividad" => "47230",
-                        "descActividad" => "Actividad del receptor",
+                        "codActividad" => null,
+                        "descActividad" => null,
                         "direccion" => null,
-                        "telefono" => $venta->elcliente->telefono,
-                        "correo" => "receptor@email.com"
+                        "telefono" => $venta->elcliente->dui != '00000000-0' ? $venta->elcliente->telefono : null,
+                        "correo" => $venta->elcliente->dui != '00000000-0' ? $venta->elcliente->correo : null
                     ],
                     "otrosDocumentos" => null,
                     "ventaTercero" => null,
@@ -212,7 +212,7 @@ class DTEBuilder
                         ]
                     ],
                     "subTotal" => round($venta->total, 2),
-                    "ivaPerci1" => 0.0,
+                    "ivaPerci1" => round($venta->iva_percibido, 2),
                     "ivaRete1" => 0.0,
                     "reteRenta" => 0.0,
                     "montoTotalOperacion" => round($venta->total_iva, 2),

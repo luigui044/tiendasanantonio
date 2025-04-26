@@ -59,7 +59,9 @@ class VentasController extends Controller
                 'numero_control' => $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
                 'id_usuario' => auth()->id(),
-                'id_sucursal' => env('BODEGA')
+                'id_sucursal' => env('BODEGA'),
+                'iva' => ($request->total / 1.13) * 0.13,
+                'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0
 
             ]);
 
