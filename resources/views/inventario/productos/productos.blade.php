@@ -246,3 +246,21 @@
     </section>
 @endsection
 
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const codBarInput = document.getElementById('cod_bar');
+
+        if (codBarInput) {
+            codBarInput.addEventListener('keydown', function (event) {
+                // Si se presiona Enter
+                if (event.key === 'Enter') {
+                    event.preventDefault(); // evita que se envíe el formulario
+                    // Puedes mover el foco al siguiente campo si lo deseas
+                    document.getElementById('unidad_medida')?.focus();
+                }
+            });
+        }
+    });
+</script>
+@endsection
