@@ -112,11 +112,8 @@ function soloNumerosPositivos(valor) {
 function calcularSubtotalFila(fila) {
 
     const precio = parseFloat(eliminarSignoDolar(fila.querySelector('.precio').textContent));
-    console.log(precio);
     const descuento = parseFloat(eliminarPorcentaje(fila.querySelector('.descuento').textContent)) / 100;
-    console.log(descuento);
     const cantidad = parseFloat(fila.querySelector('.cantidad').value);
-    console.log(cantidad);
 
     const subtotal = precio * (1 - descuento) * cantidad;
 
@@ -128,13 +125,12 @@ const calcularPorcentajeDescuento = (precio, descuento) => {
 };
 
 function agregarProducto(producto) {
-    console.log(producto);
+
 
     // Si no trae cantidad, asignar 1 por defecto
     if (!producto.cantidad || isNaN(producto.cantidad)) {
         producto.cantidad = 1;
     }
-    console.log(producto.cantidad);
     // Intentar sumar a producto existente
     if (sumarProductosExistentes(producto)) {
         calcularTotal();
@@ -142,7 +138,7 @@ function agregarProducto(producto) {
     }
 
     // Validar si el producto tiene cantidad y es a granel
-    if (!Number.isInteger(producto.cantidad)) {
+    if (producto.es_granel === 1) {
         // Es producto a granel, usar la cantidad especificada
         const cantidad = producto.cantidad;
         let cuerpoTabla = document.querySelector('#tb-productos-agregados tbody'),
@@ -153,13 +149,13 @@ function agregarProducto(producto) {
             td0 = crearElemento('td', 'id-producto-agregado', producto.cod_bar),
             td1 = crearElemento('td', 'cantidad-agregada', null),
             td2 = crearElemento('td', null, producto.producto),
-            td6 = crearElemento('td', null, `$${precio}`),
+            td6 = crearElemento('td', 'precio', `$${precio}`),
             td3 = crearElemento('td', 'descuento', null),
             td4 = crearElemento('td', 'subtotal', `$${calcularSubtotal(precio, descuento, cantidad)}`),
             td5 = document.createElement('td'),
 
             div = crearElemento('div', 'div-cantidad', null),
-            inputCantidad = crearInput('number', 'form-control cantidad', null, cantidad),
+            inputCantidad = crearInput('number', 'form-control cantidad', null, cantidad, 0.25, 0.01),
             button = crearElemento('button', 'eliminar-producto', null),
             btnDescuento = crearElemento('button', 'btn-descuento', null),
             iconoDescuento = crearElemento('i', 'fa-solid fa-percent ms-2', null),
@@ -243,14 +239,14 @@ function agregarProducto(producto) {
 
             td0 = crearElemento('td', 'id-producto-agregado', producto.cod_bar),
             td1 = crearElemento('td', 'cantidad-agregada', null),
-            td2 = crearElemento('td', null, producto.producto),
-            td6 = crearElemento('td', null, precio),
+            td2 = crearElemento('td', 'producto', producto.producto),
+            td6 = crearElemento('td', 'precio', `$${precio}`),
             td3 = crearElemento('td', 'descuento', null),
             td4 = crearElemento('td', 'subtotal', `$${calcularSubtotal(precio, descuento, 1)}`),
             td5 = document.createElement('td'),
 
             div = crearElemento('div', 'div-cantidad', null),
-            inputCantidad = crearInput('number', 'form-control cantidad', null, 1), // Valor por defecto 1
+            inputCantidad = crearInput('number', 'form-control cantidad', null, 1, 0, 1), // Valor por defecto 1
             button = crearElemento('button', 'eliminar-producto', null),
             btnDescuento = crearElemento('button', 'btn-descuento', null),
             iconoDescuento = crearElemento('i', 'fa-solid fa-percent ms-2', null),
@@ -262,8 +258,8 @@ function agregarProducto(producto) {
             i = crearElemento('i', 'fa-solid fa-trash-can', null),
             datosProducto;
 
-        inputCantidad.min = 1;
-        inputCantidad.value = 1; // Asegurar valor mínimo de 1
+
+        // inputCantidad.step = '1'; // Asegurar valor mínimo de 1
         div.appendChild(inputCantidad);
         td1.appendChild(div);
         button.type = 'button';
@@ -340,13 +336,15 @@ function crearElemento(tipo, clase, contenido) {
     if (contenido !== null) elemento.textContent = contenido;
     return elemento;
 }
-function crearInput(tipo, clase, name, valor) {
+function crearInput(tipo, clase, name, valor, min, step) {
     const input = document.createElement('input');
     input.type = tipo;
     input.className = clase;
 
     if (name !== null) input.name = name;
     if (valor !== null) input.value = valor;
+    // if (min !== null) input.min = min;
+    // if (step !== null) input.step = step;
     return input;
 }
 
@@ -557,7 +555,8 @@ function sumarProductosExistentes(producto) {
         if (productosAgregados[i].textContent.trim() == idProducto) {
             existeProducto = true;
             datos = datosFila(productosAgregados[i].parentNode, ['cantidad-agregada', 'subtotal', 'input-producto']);
-            nuevaCantidad = parseInt(datos['cantidad-agregada'].firstElementChild.firstElementChild.value) + 1;
+            nuevaCantidad = (producto.es_granel === 1 ? parseFloat(datos['cantidad-agregada'].firstElementChild.firstElementChild.value) + producto.cantidad : parseInt(datos['cantidad-agregada'].firstElementChild.firstElementChild.value) + 1);
+            console.log('nueva cantidad', nuevaCantidad);
             datos['cantidad-agregada'].firstElementChild.firstElementChild.value = nuevaCantidad;
             datos['subtotal'].textContent = '$' + calcularSubtotal(precio, descuento, nuevaCantidad);
             // Actualizando cantidad de producto en el input de tipo hidden

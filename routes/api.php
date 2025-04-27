@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeApiController;
+use App\Http\Controllers\Inventario;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,11 @@ use App\Http\Controllers\HomeApiController;
 */
 
 Route::get('/', [HomeApiController::class, 'index']);
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+//////productos
+Route::delete('prod/eliminar/{id}', [Inventario::class, 'eliminarProducto'])->name('api.prod.eliminar');
+
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 

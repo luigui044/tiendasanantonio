@@ -128,7 +128,7 @@ class DTEBuilder
                     ];
                 }
             }
-      
+            Log::info(json_encode($json));
 
         return $json;
     }
