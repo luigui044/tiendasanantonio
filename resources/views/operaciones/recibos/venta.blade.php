@@ -187,11 +187,11 @@ $parte2Str = implode(' ', $parte2);
         <p><b>--------------------------------</b></p>
         @if($venta->elcliente->tipo_cliente == '1')
             <p><b>Subtotal: ${{ number_format($venta->total_iva, 2) }}</b></p>
-            <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p>
+            {{-- <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p> --}}
             <p><b>TOTAL: ${{ number_format($venta->total_iva - $descuentos, 2) }}</b></p>
         @else
             <p><b>Sumas: ${{ number_format($venta->total, 2) }}</b></p>
-            <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p>
+            {{-- <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p> --}}
             <p><b>Subtotal: ${{ number_format($venta->total - $descuentos, 2) }}</b></p>
             <p><b>IVA 13%: ${{ number_format(($venta->total - $descuentos) * 0.13, 2) }}</b></p>
             @if($venta->total - $descuentos >= 100)
