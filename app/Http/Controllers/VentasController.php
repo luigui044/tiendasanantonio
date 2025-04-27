@@ -90,14 +90,23 @@ class VentasController extends Controller
                 // Log::info('resultadoDTE: ' . json_encode($resultadoDTE));
 
                 $venta->sello_recibido = $selloRecibido;
+                $venta->estado_venta_id = 2;
                 $venta->save();
 
                 if (!$resultadoDTE) {
                     Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
+                    $venta->estado_venta_id = 4;
+                    $venta->save();
+                 session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
+                    return redirect()->route('ventas.detalle', $venta->id_venta);
                     // No lanzamos excepción para permitir que continúe el flujo
                 }
             } catch (Exception $e) {
                 Log::error('Excepción al enviar DTE para venta ID: ' . $venta->id_venta . ' - ' . $e->getMessage());
+                $venta->estado_venta_id = 4;
+                $venta->save();
+                session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
+                return redirect()->route('ventas.detalle', $venta->id_venta);
                 // No lanzamos excepción para permitir que continúe el flujo
             }
             
@@ -108,6 +117,51 @@ class VentasController extends Controller
         } catch (Exception $error) {
             session()->flash('error', 'Ocurrió un error al registrar la venta.');
             return $error->getMessage();
+        }
+    }
+
+    public function guardarVenta(Request $request)
+    {
+        try {
+       $venta = Venta::create([
+                'id_vendedor' => auth()->id(),
+                'cliente' => $request->cliente ?: null,
+                'nombre_cliente' => $request->cliente_nuevo ?: null,
+                'tienda' => 1,
+                'fecha_hora' => now()->setTimezone('America/El_Salvador'),
+                'total' => $request->total / 1.13,
+                'total_iva' => $request->total,
+                'comentarios' => $request->comentarios,
+                'uuid' => strtoupper(Str::uuid()->toString()),
+                'numero_control' => $this->generarNumeroControl($request->tipo_venta),
+                'tipo_venta' => $request->tipo_venta,
+                'id_usuario' => auth()->id(),
+                'id_sucursal' => env('BODEGA'),
+                'iva' => ($request->total / 1.13) * 0.13,
+                'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0
+
+            ]);
+
+            // Crear detalles de venta
+            $detalles = collect($request->producto)->map(function($producto) use ($venta) {
+                [$codBar, $cantidad, $precio, $descuento] = explode(';', $producto);
+                $producto = Producto::where('cod_bar', $codBar)->first();
+                
+                return [
+                    'id_venta' => $venta->id_venta,
+                    'producto' => $producto->id_prod,
+                    'cantidad' => $cantidad,
+                    'precio' => $precio / 1.13,
+                    'precio_iva' => $precio,
+                    'descuento' => floatval($descuento) / 100
+                ];
+            });
+
+            DetalleVenta::insert($detalles->toArray());
+
+            return response()->json(['success' => 'Venta guardada con éxito', 'id_venta' => $venta->id_venta]);
+        } catch (Exception $error) {
+            return response()->json(['error' => 'Ocurrió un error al guardar la venta.']);
         }
     }
 

@@ -48,6 +48,7 @@ Route::post('addProd',[Inventario::class,'addProd'])->name('addProd');
 Route::get('modProd/{id}',[Inventario::class,'detaProd'])->name('detaProd');
 Route::put('modProd/{id}',[Inventario::class,'modProd'])->name('modProd');
 Route::delete('prod/eliminar/{id}', [Inventario::class, 'eliminarProducto'])->name('prod.eliminar');
+Route::post('duplicar-producto', [Inventario::class, 'duplicarProducto'])->name('duplicar-producto');
 
 Route::post('addCate',[Inventario::class,'addCate'])->name('addCate');
 Route::get('modCate/{id}',[Inventario::class,'detaCate'])->name('detaCate');
@@ -72,21 +73,31 @@ Route::post('filtProd2',[VentasController::class,'filtProd2'])->name('filtProd2'
 Route::post('filtCant',[VentasController::class,'filtCant'])->name('filtCant');
 
 // Ventas consumidor final
-Route::get('/ventas/inicio', [VentasController::class, 'inicio'])->name('ventas.inicio');
-Route::post('/ventas/nueva',[VentasController::class, 'nueva'])->name('ventas.crear.post');
-Route::get('/ventas/detalle/{id}', [VentasController::class, 'detalle'])->name('ventas.detalle');
-Route::get('/ventas/factura/{id_venta}',[VentasController::class, 'factura'])->name('ventas.factura');
-Route::get('/ventas/ticket/{id_venta}',[VentasController::class, 'ticketRawBT'])->name('ventas.ticket');
-Route::get('/ventas/ticket2/{id_venta}',[VentasController::class, 'ticketRawBT2'])->name('ventas.ticket2');
+Route::prefix('ventas')->name('ventas.')->group(function () {
+    Route::controller(VentasController::class)->group(function () {
+        Route::get('/inicio', 'inicio')->name('inicio');
+        Route::post('/nueva', 'nueva')->name('crear.post');
+        Route::get('/detalle/{id}', 'detalle')->name('detalle');
+        Route::get('/factura/{id_venta}', 'factura')->name('factura');
+        Route::get('/ticket/{id_venta}', 'ticketRawBT')->name('ticket');
+        Route::get('/ticket2/{id_venta}', 'ticketRawBT2')->name('ticket2');
+        Route::post('/guardar-venta', 'guardarVenta')->name('guardar-venta');
+    });
+});
 
 Route::get('prin/{venta}',[Impresiones::class,'reciboVenta'])->name('reciboVenta2');
 Route::get('print/{venta}',[Impresiones::class,'reciboVenta'])->name('reciboVenta3');
 
 // Egresos
-Route::get('/egresos/inicio', [EgresosController::class, 'inicio'])->name('egresos.inicio');
-Route::get('/egresos/nuevo', [EgresosController::class, 'nuevo'])->name('egresos.crear.get');
-Route::post('/egresos/nuevo', [EgresosController::class, 'guardar'])->name('egresos.crear.post');
-Route::get('/egresos/detalle/{id}', [EgresosController::class, 'detalles'])->name('egresos.detalle');
+// Egresos
+Route::prefix('egresos')->name('egresos.')->group(function () {
+    Route::controller(EgresosController::class)->group(function () {
+        Route::get('/inicio', 'inicio')->name('inicio');
+        Route::get('/nuevo', 'nuevo')->name('crear.get');
+        Route::post('/nuevo', 'guardar')->name('crear.post');
+        Route::get('/detalle/{id}', 'detalles')->name('detalle');
+    });
+});
 
 // Resumen gerencial
 Route::get('/informacion-graficos-general', [HomeController::class, 'informacionGraficosGeneral'])->name('informacionGraficosGeneral');

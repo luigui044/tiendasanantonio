@@ -36,7 +36,7 @@
                     </div>
                 </div>
             </div>
-        <form method="POST" action="{{ route('ventas.crear.post') }}">
+        <form id="form-venta" method="POST" action="{{ route('ventas.crear.post') }}" >
             @csrf
             <input type="hidden" name="tipo_venta" value="{{ $tipoCliente }}">
                     <div class="row mt-1" id="paso1">

@@ -230,7 +230,7 @@ function agregarProducto(producto) {
         });
     } else {
         // Producto normal
-        console.log(producto)
+        // console.log(producto)
 
         let cuerpoTabla = document.querySelector('#tb-productos-agregados tbody'),
             tr = document.createElement('tr'),
@@ -592,4 +592,81 @@ function eliminarProducto(botonAccionado) {
     filaProducto.remove();
 }
 
+
+
+async function guardarVenta() {
+    // Verificar si hay productos agregados
+    const productosAgregados = document.querySelectorAll('#tb-productos-agregados tbody tr');
+
+    if (productosAgregados.length === 0) {
+        Swal.fire({
+            title: 'Error',
+            text: 'Debe agregar al menos un producto a la venta',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    // Preguntar confirmación al usuario
+    const confirmacion = await Swal.fire({
+        title: '¿Está seguro de guardar la venta?',
+        text: 'La venta solo tendrá 48 horas para ser completada',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar'
+    });
+
+    if (!confirmacion.isConfirmed) {
+        return;
+    }
+
+    const formElement = document.querySelector('#form-venta');
+
+    if (!formElement) {
+        console.error('No se encontró el formulario #form-venta');
+        Swal.fire({
+            title: 'Error',
+            text: 'No se pudo encontrar el formulario de venta',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+
+    const formData = new FormData(formElement);
+    const url = '/ventas/guardar-venta';
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            window.location.href = `/ventas/detalle/${data.id_venta}`;
+        } else {
+            Swal.fire({
+                title: 'Error',
+                text: data.error || 'Error al guardar la venta',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    } catch (error) {
+        console.error('Error al guardar la venta:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Ha ocurrido un error al procesar la venta',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
+    }
+}
 

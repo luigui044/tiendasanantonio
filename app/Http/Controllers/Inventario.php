@@ -344,7 +344,29 @@ class Inventario extends Controller
 
 
 
+    public function duplicarProducto(Request $request)
+    {
+        try {
+            $producto = Producto::findOrFail($request->id_producto);
+           
+            $productonuevo = new Producto();
+            $productonuevo->producto = $producto->producto . ' (Copia)';
+            $productonuevo->precio = $producto->precio;
+            $productonuevo->descripcion = $producto->descripcion;
+            $productonuevo->cod_bar = $producto->cod_bar . '-COPIA';
+            $productonuevo->unidad_medida = $producto->unidad_medida;
+            $productonuevo->bangranel = $producto->bangranel;
+            $productonuevo->banexcento = $producto->banexcento;
+            $productonuevo->save();
 
+            return response()->json(['success' => true, 'message' => 'Producto duplicado éxitosamente',
+            'producto' => $productonuevo
+        ]); 
+        } catch (Exception $e) {
+            Log::error('Error al duplicar producto: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error al duplicar el producto'], 500);
+        }
+    }
 
 
 

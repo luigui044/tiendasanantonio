@@ -224,6 +224,14 @@
                                                  <td>{{ $item->unidad_medida }}</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
+                                                        <a
+                                                            class="btn btn-primary"
+                                                            onclick="duplicarProducto({{ $item->id_prod }})"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Duplicar el producto">
+                                                            <i class="fa-solid fa-copy"></i>
+                                                        </a>
                                                         <a href="{{ route('detaProd', $item->id_prod) }}"
                                                             class="btn btn-success"
                                                             data-bs-toggle="tooltip"
@@ -257,70 +265,145 @@
 @endsection
 
 @section('scripts')
-    <script>
-        function eliminarProducto(id) {
-                console.log(id);
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: '¿Quieres eliminar este producto?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Sí, eliminar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        fetch(`/prod/eliminar/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                            }
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.success) {
-                                    Swal.fire(
-                                        '¡Eliminado!',
-                                        'Producto eliminado correctamente',
-                                        'success'
-                                    ).then(() => {
-                                        document.getElementById(`producto-${id}`).remove();
-                                    });
-                                } else {
-                                    Swal.fire(
-                                        'Error',
-                                        'Error al eliminar el producto',
-                                        'error'
-                                    );
+        <script>
+            function eliminarProducto(id) {
+                    console.log(id);
+                    Swal.fire({
+                        title: '¿Estás seguro?',
+                        text: '¿Quieres eliminar este producto?',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Sí, eliminar',
+                        cancelButtonText: 'Cancelar'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            fetch(`/prod/eliminar/${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                                 }
                             })
-                            .catch(error => {
-                                console.error('Error al eliminar el producto:', error);
-                                Swal.fire(
-                                    'Error',
-                                    'Ha ocurrido un error al procesar la solicitud',
-                                    'error'
-                                );
-                            });
+                                .then(response => response.json())
+                                .then(data => {
+                                    if (data.success) {
+                                        Swal.fire(
+                                            '¡Eliminado!',
+                                            'Producto eliminado correctamente',
+                                            'success'
+                                        ).then(() => {
+                                            document.getElementById(`producto-${id}`).remove();
+                                        });
+                                    } else {
+                                        Swal.fire(
+                                            'Error',
+                                            'Error al eliminar el producto',
+                                            'error'
+                                        );
+                                    }
+                                })
+                                .catch(error => {
+                                    console.error('Error al eliminar el producto:', error);
+                                    Swal.fire(
+                                        'Error',
+                                        'Ha ocurrido un error al procesar la solicitud',
+                                        'error'
+                                    );
+                                });
+                        }
+                    });
+                }
+
+                function duplicarProducto(id) {
+                        console.log(id);
+                        Swal.fire({
+                            title: '¿Estás seguro?',
+                            text: '¿Quieres duplicar este producto?',
+                            icon: 'warning',
+                            showCancelButton: true, 
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Sí, duplicar',
+                            cancelButtonText: 'Cancelar'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                fetch(`/duplicar-producto`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ id_producto: id })
+                                }).then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                             // Crear una nueva fila con los datos del producto duplicado
+                                            const tbody = document.querySelector('tbody');
+                                            const newRow = document.createElement('tr');
+                                            newRow.id = `producto-${data.producto.id_prod}`;
+                                            newRow.innerHTML = `
+                                                <td>${data.producto.cod_bar}</td>
+                                                <td>${data.producto.producto}</td>
+                                                <td>$${Number(data.producto.precio).toFixed(2)}</td>
+                                                <td>${data.producto.descripcion}</td>                                             
+                                                <td>${data.producto.unidad_medida}</td>
+                                                <td>
+                                                        <a
+                                                            class="btn btn-primary"
+                                                            onclick="duplicarProducto(${data.producto.id_prod})"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Duplicar el producto">
+                                                            <i class="fa-solid fa-copy"></i>
+                                                        </a>
+                                                        <a href="/detalle-producto/${data.producto.id_prod}"
+                                                            class="btn btn-success"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Editar el producto">
+                                                            <i class="fa-regular fa-pen-to-square"></i>
+                                                        </a>
+
+                                                        <a type="button" 
+                                                            class="btn btn-danger eliminar-producto" 
+                                                            onclick="eliminarProducto(${data.producto.id_prod})"
+                                                            data-bs-toggle="tooltip"
+                                                            data-bs-placement="top"
+                                                            title="Eliminar el producto">
+                                                            <i class="fa-solid fa-trash-can"></i>
+                                                        </a>
+                                                  
+                                                </td>`;
+                                            tbody.appendChild(newRow);
+                                            Swal.fire('¡Duplicado!', 'Producto duplicado correctamente', 'success');
+
+                                        } else {
+
+                                            Swal.fire('Error', data.message || 'Error al duplicar el producto', 'error');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error al duplicar el producto:', error);
+                                        Swal.fire('Error', 'Ha ocurrido un error al procesar la solicitud', 'error');
+                                    });     
+                            }
+                        }); 
+                    }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const codBarInput = document.getElementById('cod_bar');
+
+            if (codBarInput) {
+                codBarInput.addEventListener('keydown', function (event) {
+                    // Si se presiona Enter
+                    if (event.key === 'Enter') {
+                        event.preventDefault(); // evita que se envíe el formulario
+                        // Puedes mover el foco al siguiente campo si lo deseas
+                        document.getElementById('unidad_medida')?.focus();
                     }
                 });
             }
-
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const codBarInput = document.getElementById('cod_bar');
-
-        if (codBarInput) {
-            codBarInput.addEventListener('keydown', function (event) {
-                // Si se presiona Enter
-                if (event.key === 'Enter') {
-                    event.preventDefault(); // evita que se envíe el formulario
-                    // Puedes mover el foco al siguiente campo si lo deseas
-                    document.getElementById('unidad_medida')?.focus();
-                }
-            });
-        }
-    });
-</script>
+        });
+    </script>
 @endsection
