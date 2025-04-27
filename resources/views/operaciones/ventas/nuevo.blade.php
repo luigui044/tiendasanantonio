@@ -29,6 +29,10 @@
                                 Listado de ventas
                             </a>
                         @endif
+                        <a href="#" onclick="guardarVenta()" class="btn btn-lg {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} me-2">
+                            <i class="fa-solid fa-save me-3"></i>
+                            Guardar venta   
+                        </a>
                     </div>
                 </div>
             </div>
@@ -44,7 +48,7 @@
 
                                 <div class="card-content">
                                     <div class="card-body">
-                                        <div class="row mb-3">
+                                          <div class="row mb-3">
                                             <div class="col-6 col-lg-8">
                                                 <select id="select-producto" class="form-control select2">
                                                     <option value="">Buscar producto por nombre o código...</option>

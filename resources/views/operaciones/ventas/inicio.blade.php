@@ -4,13 +4,21 @@
 
 @section('contenido')
     <div class="row p-md-5">
-        <div class="d-flex mb-4">
+        <div class="col-3">
             <a href="{{ route('operacion', 12) }}" class="btn btn-lg btn-primary">
                 <i class="fa-solid fa-circle-plus me-3"></i>
                 Nueva venta consumidor final
             </a>
         </div>
-        <div class="col-12">
+        <div class="col-3">
+            <a href="{{ route('operacion', 13) }}" class="btn btn-lg btn-success">
+                <i class="fa-solid fa-circle-plus me-3"></i>
+                Nueva venta crédito fiscal
+            </a>
+        </div>
+        
+     
+        <div class="col-12 mt-2">
             <div class="card">
                 <div class="card-header">
                     <h4 class="card-title">Listado de ventas</h4>

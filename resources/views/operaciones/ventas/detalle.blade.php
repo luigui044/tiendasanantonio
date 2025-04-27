@@ -5,17 +5,17 @@
 @section('contenido')
         <div class="row p-md-5">
             <div class="d-flex mb-4">
-                @if($venta->tipo_venta == 1)
+             
                 <a href="{{ route('operacion', 12) }}" class="btn btn-lg btn-primary me-3">
                     <i class="fa-solid fa-circle-plus me-3"></i>
                     Nueva venta consumidor final
                 </a>
-                @else
-                <a href="{{ route('operacion', 13) }}" class="btn btn-lg btn-primary me-3">
+           
+                <a href="{{ route('operacion', 13) }}" class="btn btn-lg btn-success me-3">
                     <i class="fa-solid fa-circle-plus me-3"></i>
                     Nueva venta crédito fiscal     
                 </a>
-                @endif
+        
                 @if(auth()->user()->rol == 1 || auth()->user()->rol == 2)
                     <a href="{{ route('ventas.inicio') }}" class="btn btn-lg btn-success me-3">
                         <i class="fa-solid fa-cart-shopping me-3"></i>

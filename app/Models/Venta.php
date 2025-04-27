@@ -34,7 +34,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $tipo_venta
  * @property float|null $iva
  * @property float|null $iva_percibido
- *
+ * @property int|null $estado_venta_id
+ * @property string|null $sello_recibido
  * @package App\Models
  */
 class Venta extends Model
@@ -67,7 +68,9 @@ class Venta extends Model
 		'id_sucursal',
 		'tipo_venta',
 		'iva',
-		'iva_percibido'
+		'iva_percibido',
+		'estado_venta_id',
+		'sello_recibido'
 	];
 
 	public function elcliente()

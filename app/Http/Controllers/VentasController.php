@@ -86,7 +86,12 @@ class VentasController extends Controller
        
             try {
                 $resultadoDTE = $this->enviarDTE($venta);
+                $selloRecibido = $resultadoDTE['selloRecibido'];
                 // Log::info('resultadoDTE: ' . json_encode($resultadoDTE));
+
+                $venta->sello_recibido = $selloRecibido;
+                $venta->save();
+
                 if (!$resultadoDTE) {
                     Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
                     // No lanzamos excepción para permitir que continúe el flujo
@@ -251,22 +256,26 @@ public function ticketRawBT2($id_venta)
                 $facturaFirmada = $response->json()['body'];
             if ($response->successful()) {
               //pasamos a enviar factura a hacienda
-              $this->enviarFactura($facturaFirmada, (string)$venta->uuid, $tipo_venta);
-              return response()->json([
+                $enviarFactura = $this->enviarFactura($facturaFirmada, (string)$venta->uuid, $tipo_venta);
+                $selloRecibido = $enviarFactura['selloRecibido'];
+              $result = [
                 'success' => 'Factura enviada con éxito',
                 'status' => $response->status(),
-                'response' => $response->json()
-              ], 200);
+                'response' => $response->json(),
+                'selloRecibido' => $selloRecibido
+              ];
+
+              return $result;
             }
 
 
 
                 
             } else {
-                return response()->json([
+                return [
                     'error' => 'Error al consultar el estado del servicio',
                     'status' => $response->status()
-                ], 500);
+                ];
             }
         } catch (Exception $e) {
             Log::error('Error en el servicio:', [
@@ -274,10 +283,10 @@ public function ticketRawBT2($id_venta)
                 'error' => $e->getMessage()
             ]);
 
-            return response()->json([
+            return [
                 'error' => 'Error de conexión con el servicio', 
                 'message' => $e->getMessage()
-            ], 500);
+            ];
         }
     }
     
@@ -396,8 +405,22 @@ public function ticketRawBT2($id_venta)
             $response = Http::withHeaders($headers)->post($url_dte, $json);
         if ($response->successful()) {
             // Log::info('Factura enviada con éxito', $response->json());
+            $selloRecibido = $response->json()['selloRecibido'];
+  
+            
+            
+            return [
+                'success' => 'Factura enviada con éxito',
+                'status' => $response->status(),
+                'response' => $response->json(),
+                'selloRecibido' => $selloRecibido,
+              ];
         } else {
             Log::error('Error al enviar factura', $response->json());
+            return [
+                'error' => 'Error al enviar factura',
+                'status' => $response->status()
+            ];
         }
          
     }
