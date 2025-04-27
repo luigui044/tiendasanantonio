@@ -357,7 +357,7 @@
                                                             title="Duplicar el producto">
                                                             <i class="fa-solid fa-copy"></i>
                                                         </a>
-                                                        <a href="/detalle-producto/${data.producto.id_prod}"
+                                                        <a href="/modProd/${data.producto.id_prod}"
                                                             class="btn btn-success"
                                                             data-bs-toggle="tooltip"
                                                             data-bs-placement="top"
@@ -373,7 +373,7 @@
                                                             title="Eliminar el producto">
                                                             <i class="fa-solid fa-trash-can"></i>
                                                         </a>
-                                                  
+
                                                 </td>`;
                                             tbody.appendChild(newRow);
                                             Swal.fire('¡Duplicado!', 'Producto duplicado correctamente', 'success');
