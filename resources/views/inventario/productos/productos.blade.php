@@ -39,15 +39,13 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <label for="bangranel">Producto a granel:</label>
                                         <div class="form-group position-relative has-icon-left">
                                             <input type="checkbox" id="bangranel" name="bangranel" value="1">
                                         </div>  
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-12">
+                                    <div class="col-6">
                                         <label for="banexcento">Producto sencillo:</label>
                                         <div class="form-group position-relative has-icon-left">
                                             <input type="checkbox" id="banexcento" name="banexcento" value="1">
@@ -137,23 +135,7 @@
                                 </div> --}}
 
                                 <div class="row mt-2">
-                                    <div class="col-12">
-                                        <label for="cod_bar">Código de barras:</label>
-                                        <div class="form-group position-relative has-icon-left">
-                                            <input type="text"
-                                                class="form-control @error('cod_bar') is-invalid @enderror"
-                                                placeholder="Código de barras" id="cod_bar" name="cod_bar"
-                                                value="{{ old('cod_bar') }}">
-                                            <div class="form-control-icon">
-                                                <i class="bi bi-person"></i>
-                                            </div>
-                                        </div>
-                                        @error('cod_bar')
-                                            <div class="invalid-feedback">
-                                                {{ $message }}
-                                            </div>
-                                        @enderror
-                                    </div>
+
                                     <div class="col-12">
                                         <label for="unidad_medida">Unidad de medida:</label>
                                         <div class="form-group position-relative has-icon-left">
@@ -182,6 +164,21 @@
                                                 @endforeach
                                             </select>
                                         </fieldset>
+                                    </div>
+                                    <div class="col-12">
+                                        <label for="cod_bar">Código de barras:</label>
+                                        <div class="form-group position-relative has-icon-left">
+                                            <input type="text" class="form-control @error('cod_bar') is-invalid @enderror" placeholder="Código de barras"
+                                                id="cod_bar" name="cod_bar" value="{{ old('cod_bar') }}">
+                                            <div class="form-control-icon">
+                                                <i class="bi bi-person"></i>
+                                            </div>
+                                        </div>
+                                        @error('cod_bar')
+                                            <div class="invalid-feedback">
+                                                {{ $message }}
+                                            </div>
+                                        @enderror
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary mt-3">
@@ -214,7 +211,7 @@
                                             <th class="text-white">Descripción</th>
                                                    <th class="text-white">Unidad de medida</th>
                                             <th class="text-white">Opciones</th>
-                                     
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -234,7 +231,7 @@
                                                             title="Editar el producto">
                                                             <i class="fa-regular fa-pen-to-square"></i>
                                                         </a>
-                                                       
+
                                                         <a type="button" 
                                                             class="btn btn-danger eliminar-producto" 
                                                             onclick="eliminarProducto( {{ $item->id_prod }})"
@@ -245,7 +242,7 @@
                                                         </a>
                                                     </div>
                                                 </td>
-                                               
+
                                             </tr>
                                         @endforeach
                                     </tbody>
