@@ -154,7 +154,7 @@
                                         @enderror
                                     </div>
                                     <div class="col-12">
-                                        <label for="unidad_medida_hacienda">Unidad de medida hacienda:</label>
+                                        <label for="unidad_medida_hacienda">Unidad de medida regla:</label>
                                         <fieldset class="form-group">
                                             <select class="form-select" id="unidad_medida_hacienda" name="unidad_medida_hacienda">
                                                 @foreach ($unidades as $item)
