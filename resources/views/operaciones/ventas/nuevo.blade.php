@@ -45,7 +45,7 @@
                                 <div class="card-content">
                                     <div class="card-body">
                                         <div class="row mb-3">
-                                            <div class="col-12 col-lg-8">
+                                            <div class="col-6 col-lg-8">
                                                 <select id="select-producto" class="form-control select2">
                                                     <option value="">Buscar producto por nombre o código...</option>
                                                     @foreach($productos as $producto)
@@ -55,10 +55,10 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-12 col-lg-2">
+                                            <div class="col-6 col-lg-2">
                                                 <input type="number" id="cantidad-producto" class="form-control" placeholder="Cantidad" min="0.25" step="0.01" disabled>
                                             </div>
-                                            <div class="col-12 col-lg-2">
+                                            <div class="col-12 col-lg-2 mt-2">
                                                 <button type="button" id="agregar-producto" class="btn btn-primary w-100">
                                                     <i class="fas fa-plus"></i> Agregar
                                                 </button>

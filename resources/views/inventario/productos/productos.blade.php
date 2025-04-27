@@ -86,7 +86,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="row">
+                                {{-- <div class="row">
                                     <div class="col-12">
                                         <label for="descuento">Porcentaje de descuento (%):</label>
                                         <div class="form-group position-relative has-icon-left">
@@ -104,7 +104,7 @@
                                             </div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
                                 {{-- <div class="row">
                                     <div class="col-12">
                                         <label for="proveedor">Proveedor:</label>
