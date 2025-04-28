@@ -172,18 +172,18 @@ $parte2Str = implode(' ', $parte2);
     <table class="productos">
         @php $descuentos = 0; @endphp
         @foreach ($venta->eldetalle as $detalle)
-            @php $descuentos += $detalle->descuento * $detalle->precio_iva * $detalle->cantidad; @endphp
+            @php $descuentos += $detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad; @endphp
             <tr>
                 <td class="nombre-producto" colspan="2"><b>{{ $detalle->elproducto->producto }}</b></td>
             </tr>
             <tr>
-                <td class="cantidadproducto"><b>{{ $detalle->cantidad }} x ${{ number_format($detalle->precio_iva, 2) }}</b></td>
-                <td class="subtotalproducto"><b>${{ number_format($detalle->cantidad * $detalle->precio_iva, 2) }}</b></td>
+                <td class="cantidadproducto"><b>{{ $detalle->cantidad }} x ${{ number_format($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio, 2) }}</b></td>
+                <td class="subtotalproducto"><b>${{ number_format($detalle->cantidad * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio), 2) }}</b></td>
             </tr>
             @if($detalle->descuento > 0)
                 <tr>
                     <td><b>Descuento:</b></td>
-                    <td><b>-${{ number_format($detalle->descuento * $detalle->precio_iva * $detalle->cantidad, 2) }}</b></td>
+                    <td><b>-${{ number_format($detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad, 2) }}</b></td>
                 </tr>
             @endif
         @endforeach
