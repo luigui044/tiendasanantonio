@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Artisan;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Events\FacturaGenerada;
 use App\Services\DTEBuilder;    
+use App\Models\Bodega;
 
 
 class VentasController extends Controller
@@ -55,7 +56,7 @@ class VentasController extends Controller
                 'total' => $request->total / 1.13,
                 'total_iva' => $request->total,
                 'comentarios' => $request->comentarios,
-                'uuid' => strtoupper(Str::uuid()->toString()),
+                'uuid' => $this->generarUUIDUnico(),    
                 'numero_control' => $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
                 'id_usuario' => auth()->id(),
@@ -85,21 +86,34 @@ class VentasController extends Controller
             // Generar factura
        
             try {
-                $resultadoDTE = $this->enviarDTE($venta);
-                $selloRecibido = $resultadoDTE['selloRecibido'];
-                // Log::info('resultadoDTE: ' . json_encode($resultadoDTE));
+                // Verificar si todos los productos son exentos
+                $todosExentos = true;
+                foreach($venta->eldetalle as $detalle) {
+                    if($detalle->elproducto->banexcento == 0) {
+                        $todosExentos = false;
+                        break;
+                    }
+                }
 
-                $venta->sello_recibido = $selloRecibido;
-                $venta->estado_venta_id = 2;
-                $venta->save();
+                if(!$todosExentos) {
+                    $resultadoDTE = $this->enviarDTE($venta);
+                    $selloRecibido = $resultadoDTE['selloRecibido'];
 
-                if (!$resultadoDTE) {
-                    Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                    $venta->estado_venta_id = 4;
+                    $venta->sello_recibido = $selloRecibido;
+                    $venta->estado_venta_id = 2;
                     $venta->save();
-                 session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                    return redirect()->route('ventas.detalle', $venta->id_venta);
-                    // No lanzamos excepción para permitir que continúe el flujo
+
+                    if (!$resultadoDTE) {
+                        Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
+                        $venta->estado_venta_id = 4;
+                        $venta->save();
+                        session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
+                        return redirect()->route('ventas.detalle', $venta->id_venta);
+                    }
+                } else {
+                    // Si todos los productos son exentos, marcamos la venta como completada
+                    $venta->estado_venta_id = 2;
+                    $venta->save();
                 }
             } catch (Exception $e) {
                 Log::error('Excepción al enviar DTE para venta ID: ' . $venta->id_venta . ' - ' . $e->getMessage());
@@ -107,7 +121,6 @@ class VentasController extends Controller
                 $venta->save();
                 session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
                 return redirect()->route('ventas.detalle', $venta->id_venta);
-                // No lanzamos excepción para permitir que continúe el flujo
             }
             
             event(new FacturaGenerada($venta));
@@ -118,6 +131,14 @@ class VentasController extends Controller
             session()->flash('error', 'Ocurrió un error al registrar la venta.');
             return $error->getMessage();
         }
+    }
+    public function generarUUIDUnico() {
+        $nuevoUUID = strtoupper(Str::uuid()->toString());   
+        $existeUUID = Venta::where('uuid', $nuevoUUID)->exists();
+        if ($existeUUID) {
+            return $this->generarUUIDUnico();
+        }
+        return $nuevoUUID;
     }
 
     public function guardarVenta(Request $request)
@@ -132,7 +153,7 @@ class VentasController extends Controller
                 'total' => $request->total / 1.13,
                 'total_iva' => $request->total,
                 'comentarios' => $request->comentarios,
-                'uuid' => strtoupper(Str::uuid()->toString()),
+                'uuid' => $this->generarUUIDUnico(),    
                 'numero_control' => $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
                 'id_usuario' => auth()->id(),
@@ -167,14 +188,18 @@ class VentasController extends Controller
 
     private function generarNumeroControl($tipo_venta)
     {
+        $bodega = env('BODEGA');
+        $establecimiento = Bodega::where('id_bodega', $bodega)->first();
         $ultimaVenta = Venta::orderBy('id_venta', 'desc')->first();
         $ultimoNumero = $ultimaVenta ? intval(substr($ultimaVenta->numero_control, -12)) : 0;
         $nuevoNumero = str_pad($ultimoNumero + 1, 15, '0', STR_PAD_LEFT);
         if ($tipo_venta == 2) {
-            return "DTE-03-12345678-{$nuevoNumero}";
+            $numeroControl = "DTE-03-{$establecimiento->cod_dte}-{$nuevoNumero}";
+            return $numeroControl;
         }
 
-        return "DTE-01-12345678-{$nuevoNumero}";
+        $numeroControl = "DTE-01-{$establecimiento->cod_dte}-{$nuevoNumero}";
+        return $numeroControl;
     }
 
     public function detalle($id) {

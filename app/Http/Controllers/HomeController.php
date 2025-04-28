@@ -65,8 +65,11 @@ class HomeController extends Controller
 
     public function submodulos($id = 3)
     {
-        $submodulos = null;
 
+        
+
+        $submodulos = null;
+       
         switch (auth()->user()->rol) {
             case 1:
                 if ($id == 1) {
@@ -81,16 +84,24 @@ class HomeController extends Controller
                 $submodulos = Modulo::where('ban_padre', 3)->get();
                 break;
         }
-        return view('submodulos', compact('submodulos'));
+        return view('submodulos', compact('submodulos' ));
     }
 
     public function hijosSubmodulo($id) {
+
+          $ventasPendientes = Venta::where('id_usuario', auth()->user()->id)
+    ->where('estado_venta_id', 1)
+    ->where('fecha_hora', '>', now()->subHours(48))
+    ->count();
+           Log::info("ventasPendientes: $ventasPendientes");
+
+
         if (!is_numeric($id))
             return abort(404);
 
         $submodulos = Modulo::where('ban_padre', $id)->get();
         if (count($submodulos) > 0) {
-            return view('submodulos', compact('submodulos'));
+            return view('submodulos', compact('submodulos', 'ventasPendientes' ));
         }
         return abort(404);
     }
@@ -165,18 +176,16 @@ class HomeController extends Controller
         $departamentos = CatDepartamento::all();
         $actividades = CatActividadesEconomica::all();
         $bodega = env('BODEGA');
-  
-        $productos = VInventario::where('id_bodega', $bodega)
-            ->where('cantidad', '>', 0)
-            ->orWhere('es_granel', 1)
-            ->get();
+        Log::info("Bodega: $bodega");
+        $productos = VInventario::where('id_bodega', $bodega)->orWhere('es_granel', 1)->get();
+        Log::info("Productos: $productos");
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes', 'tipoCliente', 'departamentos', 'actividades' ));
     }
 
     public function creditoFiscal()
     {
         $clientes = Cliente::where('estado', 1)->get();
-        $bodega = 4;
+        $bodega = env('BODEGA');
         $productos = VInventario::where('id_bodega', $bodega)->where('cantidad', '>', 0)->get();
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes'));
     }

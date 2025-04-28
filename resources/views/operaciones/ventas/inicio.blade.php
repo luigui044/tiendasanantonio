@@ -16,6 +16,26 @@
                 Nueva venta crédito fiscal
             </a>
         </div>
+        @php
+            $tieneVentasPendientes = false;
+            foreach($ventas as $venta) {
+                if($venta->id_usuario == auth()->user()->id && 
+                   $venta->estado_venta_id == 1 && 
+                   strtotime($venta->fecha_hora) > (time() - (48 * 3600))) {
+                    $tieneVentasPendientes = true;
+                    break;
+                }
+            }
+        @endphp
+
+        @if($tieneVentasPendientes)
+        <div class="col-3">
+            <a href="{{ route('ventas.pendientes') }}" class="btn btn-lg btn-warning">
+                <i class="fa-solid fa-clock me-3"></i>
+                Ventas pendientes
+            </a>
+        </div>
+        @endif
         
      
         <div class="col-12 mt-2">

@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string|null $url_pdf	
  * @property Bodega|null $bodega
  * @property User $user
- * @property Collection|DetalleVenta[] $detalles_venta
+ * @property Collection|DetalleVenta[] $eldetalle
  * @property Collection|Factura[] $facturas
  * @property int $id_usuario
  * @property int $id_sucursal
@@ -88,7 +88,7 @@ class Venta extends Model
 		return $this->belongsTo(User::class, 'id_usuario');
 	}
 
-	public function detalles()
+	public function eldetalle()
 	{
 		return $this->hasMany(DetalleVenta::class, 'id_venta');
 	}

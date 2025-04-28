@@ -78,19 +78,26 @@ class Inventario extends Controller
 
     function addProd(Request $request)
     {
-        $producto  = new Producto();
-        $producto->producto = $request->producto;
-        $producto->precio = $request->precio;
-        $producto->descuento = $request->descuento / 100;
-        $producto->bangranel = $request->bangranel;
-        $producto->banexcento = $request->banexcento;
-        // $producto->proveedor = $request->proveedor;
-        // $producto->descripcion = $request->descripcion;
-        // $producto->categoria = $request->categoria;
-        $producto->unidad_medida = $request->unidad_medida;
-        $producto->unidad_medida_mh = $request->unidad_medida_hacienda;
-        $producto->cod_bar = $request->cod_bar;
-        $producto->save();
+        try {
+            $producto = Producto::create([
+                'producto' => $request->producto,
+                'precio' => $request->precio,
+                'descuento' => $request->descuento / 100,
+                'bangranel' => $request->bangranel,
+                'banexcento' => $request->banexcento,
+                'unidad_medida' => $request->unidad_medida,
+                'unidad_medida_mh' => $request->unidad_medida_hacienda,
+                'cod_bar' => $request->cod_bar ?: 'SAN' . date('Y') . str_pad(Producto::max('id_prod') + 1, 8, '0', STR_PAD_LEFT)
+            ]);
+
+            if (!$request->cod_bar) {
+                $producto->update([
+                    'cod_bar' => 'SAN' . date('Y') . str_pad($producto->id_prod, 8, '0', STR_PAD_LEFT)
+                ]);
+            }
+        } catch (Exception $e) {
+            return back()->with('error', 'Error al crear el producto: ' . $e->getMessage());
+        }
 
         return back()->with('mensaje', "Producto {$request->producto} agregado éxitosamente");
     }

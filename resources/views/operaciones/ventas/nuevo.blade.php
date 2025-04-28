@@ -89,7 +89,7 @@
                                                         <th class="th-sm">Eliminar</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody id="productos-lista">
                                                 </tbody>
                                             </table>
                                         </div>
@@ -110,12 +110,20 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
+                                        <div class="col-12 col-md-4 mb-3">
+                                            <label for="monto" class="form-label fw-bold text-primary">*Monto entregado: ($)</label>
+                                            <div class="input-group">
+                                                <span class="input-group-text bg-primary text-white">
+                                                    <i class="fas fa-dollar-sign"></i>
+                                                </span>
+                                                <input type="number" step="0.01" id="monto" name="monto" class="form-control border-primary" placeholder="0.00" required disabled>
+                                            </div>
+                                        </div>
                                         @if (count($clientes) > 0)
                                             <div class="col-4 col-lg-6">
-                                                <label for="cliente">Cliente:</label>
+                                                <label for="cliente" class="form-label fw-bold text-primary">*Cliente:</label>
                                                 <fieldset class="form-group">
-                                                    <select name="cliente" id="cliente" class="form-control"
-                                                        required>
+                                                    <select name="cliente" id="cliente" class="form-select border-primary" required>
                                                         <option value="">Seleccione un cliente:</option>
                                                         @foreach ($clientes as $cliente)
                                                             <option value="{{ $cliente->id_cliente }}" {{ ($tipoCliente == 1 && $cliente->id_cliente == 19) ? 'selected' : '' }}>
@@ -126,22 +134,21 @@
                                                 </fieldset>
                                             </div>
                                         @endif
-                                        <div class="col-4 col-lg-6">
-                                             <div class="d-flex justify-content-center">
-                                                <a class="btn {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} " data-bs-toggle="modal" data-bs-target="#modal-nuevo-cliente">
-                                                    <i class="fa-solid fa-user-plus me-2"></i>
-                                                    Agregar nuevo cliente
-                                                </a>
-                                             </div>
-                                        </div>
+                                        {{-- @if(auth()->user()->rol == 1)
+                                            <div class="col-4 col-lg-6">
+                                                <div class="d-flex justify-content-center">
+                                                    <a class="btn {{ $tipoCliente == 1 ? 'btn-primary' : 'btn-success' }} " data-bs-toggle="modal" data-bs-target="#modal-nuevo-cliente">
+                                                        <i class="fa-solid fa-user-plus me-2"></i>
+                                                        Agregar nuevo cliente
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endif --}}
                                         <div class="col-12 col-md-4 mb-3">
                                             <label for="total">Total: ($)</label>
                                             <input type="text" id="total" name="total" class="form-control" placeholder="0.00" required readonly>
                                         </div>
-                                        <div class="col-12 col-md-4 mb-3">
-                                            <label for="monto">Monto entregado: ($)</label>
-                                            <input type="number" step="0.01" id="monto" name="monto" class="form-control" placeholder="0.00" required disabled>
-                                        </div>
+
                                         <div class="col-12 col-md-4 mb-3">
                                             <label for="cambio">Cambio: ($)</label>
                                             <input type="text" id="cambio" name="cambio" class="form-control" placeholder="0.00" readonly>
@@ -223,8 +230,18 @@
 
         // Manejo de pasos
         document.getElementById('continuar-paso1').addEventListener('click', function() {
+            if (document.getElementById('productos-lista').children.length === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Atención!',
+                    text: 'Debe agregar al menos un producto para continuar',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
             document.getElementById('paso1').style.display = 'none';
             document.getElementById('paso2').style.display = 'block';
+            document.getElementById('monto').focus();
         });
 
         document.getElementById('anterior-paso2').addEventListener('click', function() {

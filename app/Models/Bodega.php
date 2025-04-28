@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $bodega
  * @property int $estado
  * @property string|null $direccion
- * 
+ * @property string $cod_dte
  *
  * @package App\Models
  */
@@ -34,7 +34,8 @@ class Bodega extends Model
 		'telefono',
 		'bodega',
 		'estado',
-		'direccion'
+		'direccion',
+		'cod_dte'
 	];
 
 	public function estado()

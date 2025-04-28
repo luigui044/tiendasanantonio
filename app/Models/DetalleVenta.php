@@ -7,7 +7,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Collection;
 /**
  * Class DetallesVentum
  * 
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null $precio
  * @property float|null $descuento
  * @property float|null $precio_iva
+ * @property Collection|Producto[] $elproducto
  * 
  * @property Venta|null $venta
  *
@@ -55,5 +56,6 @@ class DetalleVenta extends Model
 	public function venta()
 	{
 		return $this->belongsTo(Venta::class, 'id_venta');
+
 	}
 }

@@ -157,15 +157,21 @@ $parte2Str = implode(' ', $parte2);
         @endif
         <p><b>Tipo de Doc. de identificación: {{ $venta->elcliente->tipo_cliente == '1' ? 'DUI' : '' }}</b></p>
         <p><b>Núm. Doc: {{ $venta->elcliente->tipo_cliente == '1' ? $venta->elcliente->dui : '' }}</b></p>
-        <p><b>Dirección: {{ $venta->elcliente->direccion }}</b></p>
-        <p><b>Teléfono: {{ $venta->elcliente->telefono }}</b></p>
-        <p><b>Correo: {{ $venta->elcliente->correo ?? '' }}</b></p>
+        @if($venta->elcliente->direccion)
+            <p><b>Dirección: {{ $venta->elcliente->direccion }}</b></p>
+        @endif
+        @if($venta->elcliente->telefono)
+            <p><b>Teléfono: {{ $venta->elcliente->telefono }}</b></p>
+        @endif
+        @if($venta->elcliente->correo)
+            <p><b>Correo: {{ $venta->elcliente->correo }}</b></p>
+        @endif
         <p><b>--------------------------------</b></p>
     </div>
 
     <table class="productos">
         @php $descuentos = 0; @endphp
-        @foreach ($venta->detalles as $detalle)
+        @foreach ($venta->eldetalle as $detalle)
             @php $descuentos += $detalle->descuento * $detalle->precio_iva * $detalle->cantidad; @endphp
             <tr>
                 <td class="nombre-producto" colspan="2"><b>{{ $detalle->elproducto->producto }}</b></td>
@@ -205,11 +211,23 @@ $parte2Str = implode(' ', $parte2);
     </div>
 
     <div class="footer">
-        <div style="text-align: center; margin: 10px 0;">
-            <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Code" style="width: 150px; height: 150px;">
-        </div>
+        @php
+            $todosExcentos = true;
+            foreach ($venta->eldetalle as $detalle) {
+                if ($detalle->elproducto->banexcento != 1) {
+                    $todosExcentos = false;
+                    break;
+                }
+            }
+        @endphp
+
+        @if(!$todosExcentos)
+            <div style="text-align: center; margin: 10px 0;">
+                <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Code" style="width: 150px; height: 150px;">
+            </div>
+        @endif
         <p><b>¡Gracias por su compra!</b></p>
-        <p><b>Vuelva pronto</b></p>
+        {{-- <p><b>Vuelva pronto</b></p> --}}
     </div>
 </body>
 

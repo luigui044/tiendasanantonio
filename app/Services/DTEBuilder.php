@@ -105,7 +105,7 @@ class DTEBuilder
                 ]
             ];
 
-            foreach($venta->detalles as $index => $detalle) {
+            foreach($venta->eldetalle as $index => $detalle) {
                 if($detalle->elproducto->banexcento == 0) {
                     $json["dteJson"]["cuerpoDocumento"][] = [
                         "numItem" => $index + 1,
@@ -128,7 +128,7 @@ class DTEBuilder
                     ];
                 }
             }
-         //   Log::info(json_encode($json));
+            Log::info(json_encode($json));
 
         return $json;
     }
@@ -237,7 +237,7 @@ class DTEBuilder
             ]
         ];
 
-        foreach($venta->detalles as $index => $detalle) {
+        foreach($venta->eldetalle as $index => $detalle) {
             $json["dteJson"]["cuerpoDocumento"][] = [
                 "numItem" => $index + 1,
                 "tipoItem" => 2,
