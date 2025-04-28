@@ -84,7 +84,7 @@
                                                         <th class="th-sm">Producto</th>
                                                         <th class="th-sm">Código de barras</th>
                                                         <th class="th-sm">Precio ($)</th>
-                                                        <th class="th-sm">Aplicar descuento (%)</th>
+                                                        {{-- <th class="th-sm">Aplicar descuento (%)</th> --}}
                                                         <th class="th-sm">Subtotal ($)</th>
                                                         <th class="th-sm">Eliminar</th>
                                                     </tr>
@@ -235,6 +235,28 @@
                     icon: 'warning',
                     title: '¡Atención!',
                     text: 'Debe agregar al menos un producto para continuar',
+                    confirmButtonText: 'Aceptar'
+                });
+                return;
+            }
+            const inputsCantidad = document.querySelectorAll('.cantidad');
+            let cantidadValida = true;
+
+            inputsCantidad.forEach(input => {
+                if (!input.value || input.value === '0') {
+                    cantidadValida = false;
+                    input.classList.add('is-invalid');
+                
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+
+            if (!cantidadValida) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: '¡Atención!',
+                    text: 'Por favor revise las cantidades de los productos',
                     confirmButtonText: 'Aceptar'
                 });
                 return;

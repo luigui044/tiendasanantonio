@@ -108,7 +108,7 @@ class VentasController extends Controller
                         $venta->estado_venta_id = 4;
                         $venta->save();
                         session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                        return redirect()->route('ventas.detalle', $venta->id_venta);
+                        return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => false]);
                     }
                 } else {
                     // Si todos los productos son exentos, marcamos la venta como completada
@@ -120,12 +120,14 @@ class VentasController extends Controller
                 $venta->estado_venta_id = 4;
                 $venta->save();
                 session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                return redirect()->route('ventas.detalle', $venta->id_venta);
+                return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => false]);
             }
             
             event(new FacturaGenerada($venta));
+            $imprimir = true;
             session()->flash('success', 'Venta realizada con éxito');
-            return redirect()->route('ventas.detalle', $venta->id_venta);
+
+            return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => $imprimir]);
 
         } catch (Exception $error) {
             session()->flash('error', 'Ocurrió un error al registrar la venta.');
@@ -206,8 +208,8 @@ class VentasController extends Controller
         $venta = Venta::findOrFail($id);
 
         $cliente = VCliente::where('id_cliente', $venta->cliente)->first();
-     
-        return view('operaciones.ventas.detalle', compact('venta', 'cliente'));
+        $imprimir = false;
+        return view('operaciones.ventas.detalle', compact('venta', 'cliente', 'imprimir'));
     }
 
     public function filtProd(Request $request)

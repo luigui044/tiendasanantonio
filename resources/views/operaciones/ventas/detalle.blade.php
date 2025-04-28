@@ -106,7 +106,11 @@
 @section('scripts')
         <script>
   
-
+            @if(isset($imprimir) && $imprimir)
+                setTimeout(() => {
+                    imprimirConRawBT({{ $venta->id_venta }});
+                }, 1000);
+            @endif
 
         function imprimirConRawBT(idVenta) {
               fetch(`/ventas/ticket2/${idVenta}`)

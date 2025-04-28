@@ -68,7 +68,7 @@
                                             <td>{{ date_format(date_create($venta->fecha_hora), "d/m/Y - H:i:s") }}</td>
                                             <td>{{ $venta->user->name == '' ? '-' : $venta->user->name }}</td>
                                             <td>
-                                                <a class="btn btn-success" href="{{ route('ventas.detalle', $venta->id_venta) }}">
+                                                <a class="btn btn-success" href="{{ route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => false]) }}">
                                                     <i class="fa-solid fa-circle-info me-1"></i>
                                                     Detalles
                                                 </a>

@@ -106,7 +106,14 @@ function soloNumerosPositivos(valor) {
     let regEx = /^[0-9]+(.[0-9]{1,2})?$/;
     return regEx.test(valor);
 }
+function soloNumerosPositivosDecimales(valor) {
+    // 0-9 es para que no pueda empezar con 0
+    // + es para que pueda tener decimales
+    // {1,2} es para que pueda tener hasta 2 decimales  
 
+    let regEx = /^[0-9]+(.[0-9]{1,2})?$/;
+    return regEx.test(valor);
+}
 
 // Función para calcular subtotal de una fila
 function calcularSubtotalFila(fila) {
@@ -179,14 +186,14 @@ function agregarProducto(producto) {
         btnDescuento.setAttribute('data-bs-target', '#modal-descuento');
         btnDescuento.appendChild(porcentaje);
         btnDescuento.appendChild(iconoDescuento);
-        td3.appendChild(btnDescuento);
+        // td3.appendChild(btnDescuento);
         td5.appendChild(button);
 
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td0);
         tr.appendChild(td6);
-        tr.appendChild(td3);
+        // tr.appendChild(td3);
         tr.appendChild(td4);
         tr.appendChild(td5);
         tr.appendChild(inputHidden);
@@ -194,7 +201,7 @@ function agregarProducto(producto) {
         cuerpoTabla.appendChild(tr);
 
         const actualizarDatos = () => {
-            if (!soloNumerosPositivos(inputCantidad.value)) {
+            if (!soloNumerosPositivosDecimales(inputCantidad.value)) {
                 inputCantidad.value = '';
             }
 
@@ -270,14 +277,14 @@ function agregarProducto(producto) {
         btnDescuento.setAttribute('data-bs-target', '#modal-descuento');
         btnDescuento.appendChild(porcentaje);
         btnDescuento.appendChild(iconoDescuento);
-        td3.appendChild(btnDescuento);
+        // td3.appendChild(btnDescuento);
         td5.appendChild(button);
 
         tr.appendChild(td1);
         tr.appendChild(td2);
         tr.appendChild(td0);
         tr.appendChild(td6);
-        tr.appendChild(td3);
+        // tr.appendChild(td3);
         tr.appendChild(td4);
         tr.appendChild(td5);
         tr.appendChild(inputHidden);
@@ -286,7 +293,7 @@ function agregarProducto(producto) {
 
         const actualizarDatos = () => {
             if (!soloNumerosEnterosPositivos(inputCantidad.value)) {
-                inputCantidad.value = '1'; // Valor por defecto 1 si es inválido
+                inputCantidad.value = ''; // Valor por defecto 1 si es inválido
             }
 
             datosProducto = inputHidden.value.split(';');
