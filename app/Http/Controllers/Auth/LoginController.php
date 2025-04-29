@@ -8,7 +8,7 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Session;
 class LoginController extends Controller
 {
     /*
@@ -35,6 +35,14 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
+    public function showLoginForm()
+{
+    Session::invalidate();        // Borra la sesión vieja
+    Session::regenerate();         // Crea una nueva ID de sesión
+    Session::regenerateToken();    // Crea un nuevo token CSRF
+
+    return view('auth.login');     // Carga tu vista de login normalmente
+}
     public function redirectPath()
     {
         $redireccion = '';
@@ -55,7 +63,11 @@ class LoginController extends Controller
         return $redireccion;
     }
 
-    public function loggedOut(Request $request){
+    public function loggedOut(Request $request)
+    {
+        $request->session()->invalidate();    // Borra la sesión
+        $request->session()->regenerateToken(); // Crea nuevo token CSRF
+
         return redirect('/login');
     }
 }

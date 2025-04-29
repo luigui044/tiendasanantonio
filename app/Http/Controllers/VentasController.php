@@ -124,10 +124,10 @@ class VentasController extends Controller
             }
             
             event(new FacturaGenerada($venta));
-            $imprimir = true;
+           
             // session()->flash('success', 'Venta realizada con éxito');
 
-            return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => $imprimir]);
+            return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' =>true]);
 
         } catch (Exception $error) {
             session()->flash('error', 'Ocurrió un error al registrar la venta.');
