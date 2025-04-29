@@ -49,6 +49,7 @@ Route::get('modProd/{id}',[Inventario::class,'detaProd'])->name('detaProd');
 Route::put('modProd/{id}',[Inventario::class,'modProd'])->name('modProd');
 Route::delete('prod/eliminar/{id}', [Inventario::class, 'eliminarProducto'])->name('prod.eliminar');
 Route::post('duplicar-producto', [Inventario::class, 'duplicarProducto'])->name('duplicar-producto');
+Route::get('buscar-productos', [HomeController::class, 'buscarProductos'])->name('buscar-productos');
 
 Route::post('addCate',[Inventario::class,'addCate'])->name('addCate');
 Route::get('modCate/{id}',[Inventario::class,'detaCate'])->name('detaCate');
