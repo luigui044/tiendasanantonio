@@ -45,7 +45,8 @@ class HomeController extends Controller
     }
 
     public function buscarProductoPorCodigo($codigo) {
-        $producto = VInventario::where('cod_bar', $codigo)->where('cantidad', '>', 0)->first();
+        Log::info($codigo);
+        $producto = VInventario::where('cod_bar', $codigo)->first();
         return response()->json($producto);
     }
 
@@ -178,7 +179,7 @@ class HomeController extends Controller
         $bodega = env('BODEGA');
         Log::info("Bodega: $bodega");
         $productos = VInventario::where('id_bodega', $bodega)->orWhere('es_granel', 1)->get();
-        Log::info("Productos: $productos");
+      //  Log::info("Productos: $productos");
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes', 'tipoCliente', 'departamentos', 'actividades' ));
     }
 
