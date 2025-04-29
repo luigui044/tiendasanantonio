@@ -28,14 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-$('#select-producto').on('change', function () {
-    const esGranel = $(this).find(':selected').data('granel');
-    const cantidadInput = $('#cantidad-producto');
-    cantidadInput.prop('disabled', esGranel !== 1);
-    if (esGranel !== 1) {
-        cantidadInput.val('');
-    }
-});
+
 
 // Agregar producto desde el select
 document.querySelector('#agregar-producto').addEventListener('click', () => {
@@ -56,7 +49,12 @@ document.querySelector('#agregar-producto').addEventListener('click', () => {
     if (producto.es_granel === 1) {
         const cantidad = parseFloat(cantidadInput.value);
         if (!cantidad || cantidad <= 0) {
-            alert('Ingrese una cantidad válida para productos a granel');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ingrese una cantidad válida para productos a granel',
+                confirmButtonText: 'Aceptar'
+            });
             return;
         }
         producto.cantidad = cantidad;
@@ -65,7 +63,7 @@ document.querySelector('#agregar-producto').addEventListener('click', () => {
     agregarProducto(producto);
 
     // Limpiar selección y cantidad
-    $('#select-producto').val('').trigger('change');
+    $('#select-producto').val(null).trigger('change.select2');
     document.querySelector('#cantidad-producto').value = '';
     document.querySelector('#cantidad-producto').disabled = true;
 });
@@ -76,23 +74,31 @@ $(document).ready(function () {
         placeholder: "Buscar producto por nombre o código...",
         allowClear: true,
         width: '100%',
-        dropdownParent: $('#select-producto').parent(),
         minimumInputLength: 2,
         data: productosDisponibles.map(function (item) {
             return {
                 id: item.cod_bar,
                 text: item.producto + ' - ' + item.cod_bar,
+                es_granel: item.es_granel,
                 data: item
             };
         })
-    });
+    })
 });
 
 
-window.onload = () => {
 
 
-}
+$('#select-producto').on('change', function () {
+    const productoSeleccionado = $(this).find(':selected');
+    const esGranel = productosDisponibles.find(p => p.cod_bar === productoSeleccionado.val()).es_granel;
+    console.log(esGranel);
+    const cantidadInput = document.querySelector('#cantidad-producto');
+    cantidadInput.disabled = esGranel !== 1;
+});
+
+
+
 inputMonto.addEventListener('keyup', (e) => {
     btnVenta.disabled = true;
     if (!soloNumerosPositivos(e.target.value)) {
