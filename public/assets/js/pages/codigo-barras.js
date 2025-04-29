@@ -75,7 +75,16 @@ $(document).ready(function () {
     $('#select-producto').select2({
         placeholder: "Buscar producto por nombre o código...",
         allowClear: true,
-        width: '100%'
+        width: '100%',
+        dropdownParent: $('#select-producto').parent(),
+        minimumInputLength: 2,
+        data: productosDisponibles.map(function (item) {
+            return {
+                id: item.cod_bar,
+                text: item.producto + ' - ' + item.cod_bar,
+                data: item
+            };
+        })
     });
 });
 

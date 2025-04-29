@@ -50,13 +50,8 @@
                                     <div class="card-body">
                                           <div class="row mb-3">
                                             <div class="col-6 col-lg-8">
-                                                <select id="select-producto" class="form-control select2">
-                                                    <option value="">Buscar producto por nombre o código...</option>
-                                                    @foreach($productos as $producto)
-                                                        <option value="{{ $producto->cod_bar }}" data-granel="{{ $producto->es_granel    }}" data-precio="{{ $producto->precio }}">      
-                                                            {{ $producto->producto }} - {{ $producto->cod_bar }}
-                                                        </option>
-                                                    @endforeach
+                                                <select id="select-producto" class="form-control select2" data-placeholder="Buscar producto por nombre o código...">
+                                                    <option value=""></option>
                                                 </select>
                                             </div>
                                             <div class="col-6 col-lg-2">

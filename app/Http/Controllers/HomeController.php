@@ -50,6 +50,10 @@ class HomeController extends Controller
         return response()->json($producto);
     }
 
+    public function buscarProductos(Request $request) {
+        $productos = VInventario::where('producto', 'like', '%' . $request->term . '%')->orWhere('cod_bar', 'like', '%' . $request->term . '%')->get();
+        return response()->json($productos);
+    }
    
     public function modulos() {
         $rol = auth()->user()->rol;
@@ -177,9 +181,9 @@ class HomeController extends Controller
         $departamentos = CatDepartamento::all();
         $actividades = CatActividadesEconomica::all();
         $bodega = env('BODEGA');
-        Log::info("Bodega: $bodega");
+
         $productos = VInventario::where('id_bodega', $bodega)->orWhere('es_granel', 1)->get();
-      //  Log::info("Productos: $productos");
+      //  
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes', 'tipoCliente', 'departamentos', 'actividades' ));
     }
 
