@@ -118,8 +118,8 @@ class VentasController extends Controller
                             // Enviar correo después de generar los archivos
                             if ($venta->url_pdf && $venta->url_json) {
                                 // Log::info('Enviando correo a: ' . $venta->elcliente->correo);
-                                Mail::to($venta->elcliente->correo)
-                                    ->bcc(['clientesvariossanantonio@gmail.com', 'lilian.torres33@yahoo.es', 'luismedrano@innovasv.net','cristiangc599@gmail.com'])
+                                Mail::to($venta->elcliente->correo ?? 'clientesvariossanantonio@gmail.com')
+                                    ->bcc($venta->elcliente->correo ? ['lilian.torres33@yahoo.es'] : ['clientesvariossanantonio@gmail.com', 'lilian.torres33@yahoo.es'])
                                     ->send(new EnviarFactura($venta, $empresa, $venta->url_pdf, $venta->url_json, $logo));
                                 // Log::info('Correo enviado');
                             }
