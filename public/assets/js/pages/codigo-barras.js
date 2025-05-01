@@ -31,41 +31,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Agregar producto desde el select
-document.querySelector('#agregar-producto').addEventListener('click', () => {
-    const productoSeleccionado = $('#select-producto').find(':selected');
-    const codigoBarras = productoSeleccionado.val();
-    const cantidadInput = document.querySelector('#cantidad-producto');
+// document.querySelector('#agregar-producto').addEventListener('click', () => {
+//     const productoSeleccionado = $('#select-producto').find(':selected');
+//     const codigoBarras = productoSeleccionado.val();
+//     const cantidadInput = document.querySelector('#cantidad-producto');
 
-    if (!codigoBarras) {
-        return;
-    }
+//     if (!codigoBarras) {
+//         return;
+//     }
 
-    const producto = productosDisponibles.find(p => p.cod_bar === codigoBarras);
+//     const producto = productosDisponibles.find(p => p.cod_bar === codigoBarras);
 
-    if (!producto) {
-        return;
-    }
+//     if (!producto) {
+//         return;
+//     }
 
-    if (producto.es_granel === 1) {
-        const cantidad = parseFloat(cantidadInput.value);
-        if (!cantidad || cantidad <= 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ingrese una cantidad válida para productos a granel',
-                confirmButtonText: 'Aceptar'
-            });
-            return;
-        }
-        producto.cantidad = cantidad;
-    }
+//     if (producto.es_granel === 1) {
+//         const cantidad = parseFloat(cantidadInput.value);
+//         if (!cantidad || cantidad <= 0) {
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: 'Error',
+//                 text: 'Ingrese una cantidad válida para productos a granel',
+//                 confirmButtonText: 'Aceptar'
+//             });
+//             return;
+//         }
+//         producto.cantidad = cantidad;
+//     }
 
+//     agregarProducto(producto);
+
+//     // Limpiar selección y cantidad
+//     $('#select-producto').val(null).trigger('change.select2');
+//     document.querySelector('#cantidad-producto').value = '';
+//     document.querySelector('#cantidad-producto').disabled = true;
+// });
+
+
+
+$('#select-producto').on('change', function () {
+    const productoSeleccionado = $(this).find(':selected');
+    const esGranel = productosDisponibles.find(p => p.cod_bar === productoSeleccionado.val()).es_granel;
+    const producto = productosDisponibles.find(p => p.cod_bar === productoSeleccionado.val());
     agregarProducto(producto);
-
-    // Limpiar selección y cantidad
     $('#select-producto').val(null).trigger('change.select2');
-    document.querySelector('#cantidad-producto').value = '';
-    document.querySelector('#cantidad-producto').disabled = true;
+    // const cantidadInput = document.querySelector('#cantidad-producto');
+    // cantidadInput.disabled = esGranel !== 1;
 });
 
 // Inicializar Select2
@@ -89,13 +101,6 @@ $(document).ready(function () {
 
 
 
-$('#select-producto').on('change', function () {
-    const productoSeleccionado = $(this).find(':selected');
-    const esGranel = productosDisponibles.find(p => p.cod_bar === productoSeleccionado.val()).es_granel;
-    console.log(esGranel);
-    const cantidadInput = document.querySelector('#cantidad-producto');
-    cantidadInput.disabled = esGranel !== 1;
-});
 
 
 
@@ -158,11 +163,11 @@ function agregarProducto(producto) {
         calcularTotal();
         return;
     }
-
+    console.log(producto);
     // Validar si el producto tiene cantidad y es a granel
     if (producto.es_granel === 1) {
         // Es producto a granel, usar la cantidad especificada
-        const cantidad = producto.cantidad;
+        const cantidad = 0;
         let cuerpoTabla = document.querySelector('#tb-productos-agregados tbody'),
             tr = document.createElement('tr'),
             precio = parseFloat(producto.precio),

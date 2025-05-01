@@ -5,34 +5,42 @@
 @section('contenido')
     <div class="row p-md-5">
         <div class="d-flex mb-4">
-
-            <a href="{{ route('operacion', 12) }}" class="btn btn-lg btn-primary me-3">
-                <i class="fa-solid fa-circle-plus me-3"></i>
-                Nueva venta consumidor final
-            </a>
-
-            <a href="{{ route('operacion', 13) }}" class="btn btn-lg btn-success me-3">
-                <i class="fa-solid fa-circle-plus me-3"></i>
-                Nueva venta crédito fiscal     
-            </a>
-
-            @if(auth()->user()->rol == 1 || auth()->user()->rol == 2)
-                <a href="{{ route('ventas.inicio') }}" class="btn btn-lg btn-success me-3">
-                    <i class="fa-solid fa-cart-shopping me-3"></i>
-                    Listado de ventas
+            @if($venta->estado_venta_id == 2)
+                <a href="{{ route('operacion', 12) }}" class="btn btn-lg btn-primary me-3">
+                    <i class="fa-solid fa-circle-plus me-3"></i>
+                    Nueva venta consumidor final
                 </a>
+
+                <a href="{{ route('operacion', 13) }}" class="btn btn-lg btn-success me-3">
+                    <i class="fa-solid fa-circle-plus me-3"></i>
+                    Nueva venta crédito fiscal     
+                </a>
+
+                @if(auth()->user()->rol == 1 || auth()->user()->rol == 2)
+                    <a href="{{ route('ventas.inicio') }}" class="btn btn-lg btn-success me-3">
+                        <i class="fa-solid fa-cart-shopping me-3"></i>
+                        Listado de ventas
+                    </a>
+                @endif
+
+                <a href="{{ route('ventas.factura', $venta->id_venta) }}" class="btn btn-lg btn-azul me-3">
+                    <i class="fa-solid fa-file-invoice me-3"></i>
+                    {{ $venta->url_pdf == null ? 'Generar factura por primera vez' : 'Volver a generar factura' }}
+                </a>
+                    <button onclick="imprimirConRawBT({{ $venta->id_venta }})" class="btn btn-lg btn-primary me-3 ">
+                        <i class="fa-solid fa-print me-3"></i>
+                        Imprimir
+                    </button>
+            @elseif($venta->estado_venta_id == 1)
+               
+                <a href="{{ route('operacion', ['modulo' => $venta->tipo_venta == 1 ? 12 : 13, 'venta' => $venta ]) }}" class="btn btn-lg btn-primary me-3">
+                    <i class="fa-solid fa-circle-plus me-3"></i>
+                   Reabrir venta
+                </a>
+
+                
+                    
             @endif
-
-            <a href="{{ route('ventas.factura', $venta->id_venta) }}" class="btn btn-lg btn-azul me-3">
-                <i class="fa-solid fa-file-invoice me-3"></i>
-                {{ $venta->url_pdf == null ? 'Generar factura por primera vez' : 'Volver a generar factura' }}
-            </a>
-                <button onclick="imprimirConRawBT({{ $venta->id_venta }})" class="btn btn-lg btn-primary me-3 ">
-                    <i class="fa-solid fa-print me-3"></i>
-                    Imprimir
-                </button>
-
-
         </div>
         <div class="col-12">
             <div class="card">
