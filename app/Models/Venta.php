@@ -25,9 +25,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $uuid
  * @property string $numero_control
  * @property string|null $url_pdf	
+ * @property string|null $url_json
  * @property Bodega|null $bodega
  * @property User $user
  * @property Collection|DetalleVenta[] $eldetalle
+ * @property Collection|Cliente[] $elcliente
  * @property Collection|Factura[] $facturas
  * @property int $id_usuario
  * @property int $id_sucursal
@@ -70,7 +72,8 @@ class Venta extends Model
 		'iva',
 		'iva_percibido',
 		'estado_venta_id',
-		'sello_recibido'
+		'sello_recibido',
+		'url_json'
 	];
 
 	public function elcliente()

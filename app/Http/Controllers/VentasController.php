@@ -25,6 +25,8 @@ use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use App\Events\FacturaGenerada;
 use App\Services\DTEBuilder;    
 use App\Models\Bodega;
+use App\Mail\EnviarFactura;
+use Illuminate\Support\Facades\Mail;
 
 
 class VentasController extends Controller
@@ -45,8 +47,22 @@ class VentasController extends Controller
 
     public function nueva(Request $request)
     {
+        $empresa = TEmpresa::first();
         try {
             // Crear y guardar la venta
+            // Verificar si todos los productos son exentos
+            $codigosBarras = collect($request->producto)->map(function($producto) {
+                return explode(';', $producto)[0];
+            })->unique()->values()->all();
+
+            $productos = Producto::whereIn('cod_bar', $codigosBarras)
+                ->select('id_prod', 'cod_bar', 'banexcento')
+                ->get()
+                ->keyBy('cod_bar');
+
+            // Verificar exención en una sola consulta
+            $todosExentos = $productos->where('banexcento', 0)->isEmpty();
+
             $venta = Venta::create([
                 'id_vendedor' => auth()->id(),
                 'cliente' => $request->cliente ?: null,
@@ -57,19 +73,18 @@ class VentasController extends Controller
                 'total_iva' => $request->total,
                 'comentarios' => $request->comentarios,
                 'uuid' => $this->generarUUIDUnico(),    
-                'numero_control' => $this->generarNumeroControl($request->tipo_venta),
+                'numero_control' => $todosExentos ? $this->generarNumeroControlExento() : $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
                 'id_usuario' => auth()->id(),
                 'id_sucursal' => env('BODEGA'),
                 'iva' => ($request->total / 1.13) * 0.13,
                 'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0
-
             ]);
 
-            // Crear detalles de venta
-            $detalles = collect($request->producto)->map(function($producto) use ($venta) {
+            // Crear detalles de venta optimizado
+            $detalles = collect($request->producto)->map(function($producto) use ($venta, $productos) {
                 [$codBar, $cantidad, $precio, $descuento] = explode(';', $producto);
-                $producto = Producto::where('cod_bar', $codBar)->first();
+                $producto = $productos[$codBar];
                 
                 return [
                     'id_venta' => $venta->id_venta,
@@ -84,50 +99,61 @@ class VentasController extends Controller
             DetalleVenta::insert($detalles->toArray());
         
             // Generar factura
-       
             try {
-                // Verificar si todos los productos son exentos
-                $todosExentos = true;
-                foreach($venta->eldetalle as $detalle) {
-                    if($detalle->elproducto->banexcento == 0) {
-                        $todosExentos = false;
-                        break;
-                    }
-                }
-
                 if(!$todosExentos) {
-                    $resultadoDTE = $this->enviarDTE($venta);
-                    $selloRecibido = $resultadoDTE['selloRecibido'];
-
-                    $venta->sello_recibido = $selloRecibido;
-                    $venta->estado_venta_id = 2;
-                    $venta->save();
-
-                    if (!$resultadoDTE) {
-                        Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                        $venta->estado_venta_id = 4;
-                        $venta->save();
-                        session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                        return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => false]);
-                    }
+                    // Mover la generación de DTE a un job en cola
+                    dispatch(function() use ($venta, $empresa) {
+                        $resultadoDTE = $this->enviarDTE($venta);
+                        if ($resultadoDTE) {
+                            $venta->update([
+                                'sello_recibido' => $resultadoDTE['selloRecibido'],
+                                'estado_venta_id' => 2
+                            ]);
+                            // Generar PDF y JSON después de recibir el sello
+                            $logo = base64_encode(file_get_contents(public_path('assets/logocolor2.png')));                   
+                     
+                            event(new FacturaGenerada($venta));
+                            $venta->refresh(); // Recargar el modelo para obtener los datos actualizados    
+                            
+                            // Enviar correo después de generar los archivos
+                            if ($venta->url_pdf && $venta->url_json) {
+                                // Log::info('Enviando correo a: ' . $venta->elcliente->correo);
+                                Mail::to($venta->elcliente->correo)
+                                    ->bcc(['clientesvariossanantonio@gmail.com', 'lilian.torres33@yahoo.es', 'luismedrano@innovasv.net','cristiangc599@gmail.com'])
+                                    ->send(new EnviarFactura($venta, $empresa, $venta->url_pdf, $venta->url_json, $logo));
+                                // Log::info('Correo enviado');
+                            }
+                        } else {
+                            Log::error('Error al enviar DTE para venta ID: ' . $venta->id_venta);
+                            $venta->update(['estado_venta_id' => 4]);
+                            // Generar PDF aunque el DTE falle
+                            event(new FacturaGenerada($venta));
+                        }
+                    });
                 } else {
-                    // Si todos los productos son exentos, marcamos la venta como completada
-                    $venta->estado_venta_id = 2;
-                    $venta->save();
-                }
-            } catch (Exception $e) {
-                Log::error('Excepción al enviar DTE para venta ID: ' . $venta->id_venta . ' - ' . $e->getMessage());
-                $venta->estado_venta_id = 4;
-                $venta->save();
-                session()->flash('error', 'Error al enviar DTE para venta ID: ' . $venta->id_venta);
-                return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' => false]);
-            }
-            
-            event(new FacturaGenerada($venta));
-           
-            // session()->flash('success', 'Venta realizada con éxito');
+                    $venta->update(['estado_venta_id' => 2]);
 
-            return redirect()->route('ventas.detalle', ['id' => $venta->id_venta, 'imprimir' =>true]);
+                    // Para ventas exentas, generar PDF y JSON inmediatamente
+                    event(new FacturaGenerada($venta));
+           
+                }
+
+                session()->flash('success', 'Venta realizada con éxito');
+                return redirect()->route('ventas.detalle', [
+                    'id' => $venta->id_venta, 
+                    'imprimir' => true
+                ]);
+
+            } catch (Exception $e) {
+                Log::error('Excepción al procesar venta ID: ' . $venta->id_venta . ' - ' . $e->getMessage());
+                $venta->update(['estado_venta_id' => 4]);
+                event(new FacturaGenerada($venta));
+                session()->flash('error', 'Error al procesar la venta');
+                return redirect()->route('ventas.detalle', [
+                    'id' => $venta->id_venta, 
+                    'imprimir' => false
+                ]);
+            }
 
         } catch (Exception $error) {
             session()->flash('error', 'Ocurrió un error al registrar la venta.');
@@ -141,6 +167,15 @@ class VentasController extends Controller
             return $this->generarUUIDUnico();
         }
         return $nuevoUUID;
+    }
+
+    public function generarNumeroControlExento() {
+        $bodega = env('BODEGA');
+        $establecimiento = Bodega::where('id_bodega', $bodega)->first();
+        $ultimaVenta = Venta::orderBy('id_venta', 'desc')->where('numero_control', 'like', 'DTE-none-%')->first();
+        $ultimoNumero = $ultimaVenta ? intval(substr($ultimaVenta->numero_control, -12)) : 0;
+        $nuevoNumero = str_pad($ultimoNumero + 1, 15, '0', STR_PAD_LEFT);
+        return "DTE-none-{$establecimiento->cod_dte}-{$nuevoNumero}";
     }
 
     public function guardarVenta(Request $request)
@@ -291,7 +326,7 @@ class VentasController extends Controller
         $pdf->setPaper([0, 0, 164.409, 950.394], 'portrait');   // 58mm x 300mm = 164.409pt x 850.394pt
         $pdf->render();
         // Generar nombre único para el archivo PDF
-        $nombreArchivo = "venta_{$venta->id_venta}_" . date_format(date_create($venta->fecha_hora), 'd-m-Y') . '.pdf';
+        $nombreArchivo = $venta->uuid . '.pdf';
         
         // Guardar PDF en storage/app/public/facturas
         $rutaGuardado = storage_path('app/public/facturas/' . $nombreArchivo);
@@ -330,15 +365,32 @@ public function ticketRawBT2($id_venta)
                 $firmarDTE = $url_firmador . 'firmardocumento/';
                 $tipo_venta = $venta->tipo_venta;
                 $json = DTEBuilder::build($venta, $empresa, $tipo_venta);
-                // Log::info(json_encode($json));
+                
 
 
                 $response = Http::post($firmarDTE, $json); 
                 $facturaFirmada = $response->json()['body'];
+
+
             if ($response->successful()) {
               //pasamos a enviar factura a hacienda
                 $enviarFactura = $this->enviarFactura($facturaFirmada, (string)$venta->uuid, $tipo_venta);
+                // Log::info('Respuesta de enviarFactura: ' . json_encode($enviarFactura));
                 $selloRecibido = $enviarFactura['selloRecibido'];
+
+                $jsonCompleto = [
+                    'json' => $json['dteJson'],
+                    'responseMH' => $enviarFactura,
+                    'firmaElectronica' => $facturaFirmada
+                ];
+                // Log::info('jsonCompleto: ' . json_encode($jsonCompleto));
+                $nombreArchivo = $venta->uuid . '.json';
+                $rutaArchivo = storage_path('app/public/facturas/' . $nombreArchivo);
+                file_put_contents($rutaArchivo, json_encode($jsonCompleto, JSON_PRETTY_PRINT));
+                
+                $venta->url_json = 'facturas/' . $nombreArchivo;
+                $venta->save();
+
               $result = [
                 'success' => 'Factura enviada con éxito',
                 'status' => $response->status(),
@@ -488,7 +540,7 @@ public function ticketRawBT2($id_venta)
             // Log::info('Factura enviada con éxito', $response->json());
             $selloRecibido = $response->json()['selloRecibido'];
   
-            
+           
             
             return [
                 'success' => 'Factura enviada con éxito',
