@@ -49,19 +49,19 @@
                                 <div class="card-content">
                                     <div class="card-body">
                                           <div class="row mb-3">
-                                            <div class="col-6 col-lg-8">
+                                            <div class="col-12 col-lg-12">
                                                 <select id="select-producto" class="form-control select2" data-placeholder="Buscar producto por nombre o código...">
                                                     <option value=""></option>
                                                 </select>
                                             </div>
-                                            <div class="col-6 col-lg-2">
+                                            {{-- <div class="col-6 col-lg-2">
                                                 <input type="number" id="cantidad-producto" class="form-control" placeholder="Cantidad" min="0.25" step="0.01" disabled>
                                             </div>
                                             <div class="col-12 col-lg-2 mt-2">
                                                 <button type="button" id="agregar-producto" class="btn btn-primary w-100">
                                                     <i class="fas fa-plus"></i> Agregar
                                                 </button>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         {{-- <div class="input-group mb-3">
 
@@ -70,7 +70,12 @@
                                             <button class="btn btn-primary" type="button" id="btn-buscar-producto">
                                                 <i class="fas fa-plus"></i>
                                             </button>
+
                                         </div> --}}
+
+                                        @if(isset($venta))
+                                            {{ $venta }}
+                                        @endif
                                         <div class="table-responsive">
                                             <table id="tb-productos-agregados" class="table table-sm table-hover mb-0">
                                                 <thead>
@@ -85,6 +90,19 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody id="productos-lista">
+                                                    @if(isset($venta))
+
+                                                        @foreach($venta->eldetalle as $detalle)
+                                                            <tr>
+                                                                <td>{{ $detalle->cantidad }}</td>
+                                                                <td>{{ $detalle->elproducto->producto }}</td>
+                                                                <td>{{ $detalle->elproducto->cod_bar }}</td>
+                                                                <td>{{ $detalle->precio }}</td>
+                                                                <td>{{ $detalle->subtotal }}</td>
+                                                                <td><button class="btn btn-danger"><i class="fa-solid fa-trash"></i></button></td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @endif
                                                 </tbody>
                                             </table>
                                         </div>
