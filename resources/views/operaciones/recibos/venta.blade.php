@@ -101,12 +101,12 @@
 <body>
     <div class="header">
         <img src="data:image/png;base64,{{ $logoBase64 }}" style="width: 100%; max-width: 46mm; height: auto;">
-        <p><b>Tu mejor opción en Texistepeque</b></p>
-        <p><b>DOCUMENTO TRIBUTARIO ELECTRÓNICO v.{{ $venta->tipo_venta == '1' ? '1' : '3' }}</b></p>
-        <p><b>{{ $venta->tipo_venta == '1' ? 'FACTURA' : 'COMPROBANTE DE CRÉDITO FISCAL' }}</b></p>
-        <p><b>--------------------------------</b></p>
-        <p><b>DATOS DEL EMISOR</b></p>
-        <p><b>--------------------------------</b></p>
+        <p>Tu mejor opción en Texistepeque</p>
+        <p>DOCUMENTO TRIBUTARIO ELECTRÓNICO v.{{ $venta->tipo_venta == '1' ? '1' : '3' }}</p>
+        <p>{{ $venta->tipo_venta == '1' ? 'FACTURA' : 'COMPROBANTE DE CRÉDITO FISCAL' }}</p>
+        <p>--------------------------------</p>
+        <p>DATOS DEL EMISOR</p>
+        <p>--------------------------------</p>
         @php
 $nombreCompleto = $empresa->nombre_empresa;
 $palabras = explode(' ', $nombreCompleto);
@@ -125,48 +125,51 @@ if ($totalPalabras >= 2) {
 $parte1Str = implode(' ', $parte1);
 $parte2Str = implode(' ', $parte2);
         @endphp
-        <h1><b>{{ $parte1Str }}</b></h1>
-        <h1><b>{{ $parte2Str }}</b></h1>
-        <p><b>NIT:
+        <p>{{ $parte1Str }}</p>
+        <p>{{ $parte2Str }}</p>
+        <p>NIT:
                 {{ substr($empresa->nit, 0, 4) }}-{{ substr($empresa->nit, 4, 6) }}-{{ substr($empresa->nit, 10, 3) }}-{{ substr($empresa->nit, 13) }}</b>
         </p>
-        <p><b>NRC: {{ substr($empresa->nrc, 0, 6) }}-{{ substr($empresa->nrc, 6) }}</b></p>
-        <p><b>Actividad económica: {{ $empresa->actividad_economica }}</b></p>
-        <p><b>{{ $empresa->direccion_empresa }}</b></p>
-        <p><b>Sucursal #{{ env('BODEGA') }}</b></p>
-        <p><b>Teléfono: {{ $empresa->telefono_empresa }}</b></p>
-        <p><b>WhatsApp: {{ $empresa->celular_empresa }}</b></p>
-        <p><b>Correo: {{ $empresa->correo_empresa }}</b></p>
-        <p><b>Fecha y hora de emisión: {{ date_format(date_create($venta->fecha_hora), 'd/m/Y H:i:s') }}</b></p>
-        <p><b>Código de generación: {{ $venta->uuid }}</b></p>
-        <p><b>Número de control: {{ $venta->numero_control }}</b></p>
-        <p><b>Sello de recepción: {{ $venta->sello_recibido }}</b></p>
-        <p><b>Modelo de transmisión: Normal</b></p>
-        <p><b>Tipo de Establecimiento: {{ env('BODEGA') == 1 ? 'Matriz' : 'Sucursal / Agencia' }}</b></p>
+        <p>NRC: {{ substr($empresa->nrc, 0, 6) }}-{{ substr($empresa->nrc, 6) }}</p>
+        <p>Actividad económica: {{ $empresa->actividad_economica }}</p>
+        <p>{{ $empresa->direccion_empresa }}</p>
+        <p>Sucursal #{{ env('BODEGA') }}</p>
+        <p>Teléfono: {{ $empresa->telefono_empresa }}</p>
+        <p>WhatsApp: {{ $empresa->celular_empresa }}</p>
+        <p >Correo</p>
+        <p style="font-size: 8.5px;">{{ $empresa->correo_empresa }}</p>
+        @if(substr($venta->numero_control, 0, 9) !== 'DTE-none-')
+            <p>Fecha y hora de emisión: {{ date_format(date_create($venta->fecha_hora), 'd/m/Y H:i:s') }}</p>
+            <p>Código de generación: {{ $venta->uuid }}</p>
+            <p>Número de control: {{ $venta->numero_control }}</p>
+            <p>Sello de recepción: {{ $venta->sello_recibido }}</p>
+            <p>Modelo de transmisión: Normal</p>
+            <p>Tipo de Establecimiento: {{ env('BODEGA') == 1 ? 'Matriz' : 'Sucursal / Agencia' }}</p>
+        @endif
     </div>
 
     <div class="ticket-info">
-        <p><b>--------------------------------</b></p>
-        <p><b>DATOS DEL CLIENTE</b></p>
-        <p><b>--------------------------------</b></p>
-        <p><b>Nombre o Razón Social: {{ $venta->elcliente->nombre }}</b></p>
+        <p>--------------------------------</p>
+        <p>DATOS DEL CLIENTE</p>
+        <p>--------------------------------</p>
+        <p>Nombre o Razón Social: {{ $venta->elcliente->nombre }}</p>
         @if($venta->elcliente->tipo_cliente != '1')
-            <p><b>Nombre Comercial: {{ $venta->elcliente->nombre }}</b></p>
-            <p><b>NIT: {{ $venta->elcliente->nit }}</b></p>
-            <p><b>NRC: {{ $venta->elcliente->nrc }}</b></p>
+            <p>Nombre Comercial: {{ $venta->elcliente->nombre }}</p>
+            <p>NIT: {{ $venta->elcliente->nit }}</p>
+            <p>NRC: {{ $venta->elcliente->nrc }}</p>
         @endif
-        <p><b>Tipo de Doc. de identificación: {{ $venta->elcliente->tipo_cliente == '1' ? 'DUI' : '' }}</b></p>
-        <p><b>Núm. Doc: {{ $venta->elcliente->tipo_cliente == '1' ? $venta->elcliente->dui : '' }}</b></p>
+        <p>Tipo de Doc. de identificación: {{ $venta->elcliente->tipo_cliente == '1' ? 'DUI' : '' }}</p>
+        <p>Núm. Doc: {{ $venta->elcliente->tipo_cliente == '1' ? $venta->elcliente->dui : '' }}</p>
         @if($venta->elcliente->direccion)
-            <p><b>Dirección: {{ $venta->elcliente->direccion }}</b></p>
+            <p>Dirección: {{ $venta->elcliente->direccion }}</p>
         @endif
         @if($venta->elcliente->telefono)
-            <p><b>Teléfono: {{ $venta->elcliente->telefono }}</b></p>
+            <p>Teléfono: {{ $venta->elcliente->telefono }}</p>
         @endif
         @if($venta->elcliente->correo)
-            <p><b>Correo: {{ $venta->elcliente->correo }}</b></p>
+            <p>Correo: {{ $venta->elcliente->correo }}</p>
         @endif
-        <p><b>--------------------------------</b></p>
+        <p>--------------------------------</p>
     </div>
 
     <table class="productos">
@@ -174,16 +177,16 @@ $parte2Str = implode(' ', $parte2);
         @foreach ($venta->eldetalle as $detalle)
             @php $descuentos += $detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad; @endphp
             <tr>
-                <td class="nombre-producto" colspan="2"><b>{{ $detalle->elproducto->producto }}</b></td>
+                <td class="nombre-producto" colspan="2">{{ $detalle->elproducto->producto }}</td>
             </tr>
             <tr>
-                <td class="cantidadproducto"><b>{{ $detalle->cantidad }} x ${{ number_format($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio, 2) }}</b></td>
-                <td class="subtotalproducto"><b>${{ number_format($detalle->cantidad * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio), 2) }}</b></td>
+                <td class="cantidadproducto">{{ $detalle->cantidad }} x ${{ number_format($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio, 2) }}</td>
+                <td class="subtotalproducto">${{ number_format($detalle->cantidad * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio), 2) }}</td>
             </tr>
             @if($detalle->descuento > 0)
                 <tr>
-                    <td><b>Descuento:</b></td>
-                    <td><b>-${{ number_format($detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad, 2) }}</b></td>
+                    <td>Descuento:</td>
+                    <td>-${{ number_format($detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad, 2) }}</td>
                 </tr>
             @endif
         @endforeach
@@ -192,33 +195,33 @@ $parte2Str = implode(' ', $parte2);
     <div class="total">
         <p><b>--------------------------------</b></p>
         @if($venta->elcliente->tipo_cliente == '1')
-            <p><b>Subtotal: ${{ number_format($venta->total_iva, 2) }}</b></p>
+            <p>Subtotal: ${{ number_format($venta->total_iva, 2) }}</p>
             {{-- <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p> --}}
-            <p><b>TOTAL: ${{ number_format($venta->total_iva - $descuentos, 2) }}</b></p>
+            <p>TOTAL: ${{ number_format($venta->total_iva - $descuentos, 2) }}</p>
         @else
-            <p><b>Sumas: ${{ number_format($venta->total, 2) }}</b></p>
+            <p>Sumas: ${{ number_format($venta->total, 2) }}</p>
             {{-- <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p> --}}
-            <p><b>Subtotal: ${{ number_format($venta->total - $descuentos, 2) }}</b></p>
-            <p><b>IVA 13%: ${{ number_format(($venta->total - $descuentos) * 0.13, 2) }}</b></p>
+            <p>Subtotal: ${{ number_format($venta->total - $descuentos, 2) }}</p>
+            <p>IVA 13%: ${{ number_format(($venta->total - $descuentos) * 0.13, 2) }}</p>
             @if($venta->total - $descuentos >= 100)
-                <p><b>IVA Percibido 1%: ${{ number_format(($venta->total - $descuentos) * 0.01, 2) }}</b></p>
-                <p><b>TOTAL: ${{ number_format(($venta->total_iva - $descuentos) + (($venta->total - $descuentos) * 0.01), 2) }}</b></p>
+                <p>IVA Percibido 1%: ${{ number_format(($venta->total - $descuentos) * 0.01, 2) }}</p>
+                <p>TOTAL: ${{ number_format(($venta->total_iva - $descuentos) + (($venta->total - $descuentos) * 0.01), 2) }}</p>
             @else
-                <p><b>TOTAL: ${{ number_format(($venta->total_iva    - $descuentos), 2) }}</b></p>
+                <p>TOTAL: ${{ number_format(($venta->total_iva - $descuentos), 2) }}</p>
             @endif
         @endif
-        <p><b>--------------------------------</b></p>
+        <p>--------------------------------</p>
     </div>
 
     <div class="footer">
         @php
-            $todosExcentos = true;
-            foreach ($venta->eldetalle as $detalle) {
-                if ($detalle->elproducto->banexcento != 1) {
-                    $todosExcentos = false;
-                    break;
-                }
-            }
+$todosExcentos = true;
+foreach ($venta->eldetalle as $detalle) {
+    if ($detalle->elproducto->banexcento != 1) {
+        $todosExcentos = false;
+        break;
+    }
+}
         @endphp
 
         @if(!$todosExcentos)
@@ -226,7 +229,7 @@ $parte2Str = implode(' ', $parte2);
                 <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Code" style="width: 150px; height: 150px;">
             </div>
         @endif
-        <p><b>¡Gracias por su compra!</b></p>
+        <p>¡Gracias por su compra!</p>
         {{-- <p><b>Vuelva pronto</b></p> --}}
     </div>
 </body>

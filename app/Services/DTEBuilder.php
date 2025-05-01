@@ -150,8 +150,8 @@ class DTEBuilder
                     "tipoOperacion" => 1,
                     "tipoContingencia" => null,
                     "motivoContin" => null,
-                    "fecEmi" => date('Y-m-d', strtotime($venta->fecha)),
-                    "horEmi" => date('H:i:s', strtotime($venta->fecha)),
+                    "fecEmi" => date('Y-m-d', strtotime($venta->fecha_hora)),
+                    "horEmi" => date('H:i:s', strtotime($venta->fecha_hora)),
                     "tipoMoneda" => "USD"
                 ],
                 "documentoRelacionado" => null,

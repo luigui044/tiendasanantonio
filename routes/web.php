@@ -9,6 +9,7 @@ use App\Http\Controllers\Operaciones;
 use App\Http\Controllers\CatalogosController;
 use App\Http\Controllers\Impresiones;
 use App\Http\Controllers\VentasController;
+use App\Http\Controllers\CorreoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -122,3 +123,5 @@ Route::get('/prueba', function() {
 Route::get('/obtener-municipios', [CatalogosController::class, 'obtenerMunicipios'])->name('obtenerMunicipios');     
 
 Route::post('/enviarDTE', [VentasController::class, 'enviarDTE'])->name('enviarDTE');
+
+Route::get('/ver-plantilla-correo', [CorreoController::class, 'verPlantillaCorreo'])->name('verPlantillaCorreo');
