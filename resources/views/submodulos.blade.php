@@ -17,9 +17,7 @@
                     </div>
                     <div class="card-body d-flex flex-column justify-content-between">
                         <p class="mt-4 card-text text-center">Tienes {{ $ventasPendientes }} ventas pendientes de completar</p>
-                        {{-- <a href="{{ route('ventas.pendientes') }}" class="btn btn-warning">
-                            Ver ventas pendientes
-                        </a> --}}
+                  
                     </div>
                 </div>
             </div>
