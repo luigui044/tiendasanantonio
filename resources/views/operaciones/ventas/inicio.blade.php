@@ -30,10 +30,10 @@
 
         @if($tieneVentasPendientes)
         <div class="col-3">
-            <a href="{{ route('ventas.pendientes') }}" class="btn btn-lg btn-warning">
+            {{-- <a href="{{ route('ventas.pendientes') }}" class="btn btn-lg btn-warning">
                 <i class="fa-solid fa-clock me-3"></i>
                 Ventas pendientes
-            </a>
+            </a> --}}
         </div>
         @endif
         
