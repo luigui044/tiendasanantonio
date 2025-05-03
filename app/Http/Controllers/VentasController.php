@@ -114,7 +114,7 @@ class VentasController extends Controller
                      
                             event(new FacturaGenerada($venta));
                             $venta->refresh(); // Recargar el modelo para obtener los datos actualizados    
-                            
+                            Log::info('venta: ' . json_encode($venta));
                             // Enviar correo después de generar los archivos
                             if ($venta->url_pdf && $venta->url_json) {
                                 // Log::info('Enviando correo a: ' . $venta->elcliente->correo);
@@ -328,17 +328,29 @@ class VentasController extends Controller
         // Generar URL para el QR
         $urlFactura = route('ventas.detalle', $venta->id_venta);
         
-        // Generar QR como base64
-        $qrCode = QrCode::format('png')
-                        ->size(100)
-                        ->margin(1)
-                        ->generate($urlFactura);
-        $qrBase64 = base64_encode($qrCode);
+        try {
+            $qrCode = QrCode::format('svg')
+                ->size(150)
+                ->margin(1)
+                ->color(200, 200, 200)
+                ->backgroundColor(255, 255, 255)
+                ->generate($urlFactura);
+            
+            Log::info('qrCode generado exitosamente');
 
-        $pdf = new Dompdf();
-        $pdf->loadHtml(view('operaciones.recibos.venta', compact('venta', 'logoBase64', 'qrBase64'))->render());    
-        $pdf->setPaper([0, 0, 164.409, 950.394], 'portrait');   // 58mm x 300mm = 164.409pt x 850.394pt
-        $pdf->render();
+            $pdf = new Dompdf();
+            $pdf->loadHtml(view('operaciones.recibos.venta', [
+                'venta' => $venta,
+                'logoBase64' => $logoBase64,
+                'qrCode' => $qrCode
+            ])->render());
+            
+            $pdf->setPaper([0, 0, 164.409, 950.394], 'portrait');
+            $pdf->render();
+        } catch (Exception $e) {
+            Log::error('Error al generar factura: ' . $e->getMessage());
+            throw $e;
+        }
         // Generar nombre único para el archivo PDF
         $nombreArchivo = $venta->uuid . '.pdf';
         
