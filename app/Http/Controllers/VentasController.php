@@ -329,21 +329,19 @@ class VentasController extends Controller
         $urlFactura = route('ventas.detalle', $venta->id_venta);
         
         try {
-            $qrCode = QrCode::format('svg')
-                ->size(150)
-                ->margin(1)
-                ->color(200, 200, 200)
-                ->backgroundColor(255, 255, 255)
-                ->generate($urlFactura);
+                   $qrCode = QrCode::format('png')
+                        ->size(100)
+                        ->margin(1)
+                        ->generate($urlFactura);
+        $qrBase64 = base64_encode($qrCode);
+
+        $pdf = new Dompdf();
+
             
             Log::info('qrCode generado exitosamente');
 
             $pdf = new Dompdf();
-            $pdf->loadHtml(view('operaciones.recibos.venta', [
-                'venta' => $venta,
-                'logoBase64' => $logoBase64,
-                'qrCode' => $qrCode
-            ])->render());
+            $pdf->loadHtml(view('operaciones.recibos.venta', compact('venta', 'logoBase64', 'qrBase64'))->render());
             
             $pdf->setPaper([0, 0, 164.409, 950.394], 'portrait');
             $pdf->render();
