@@ -226,7 +226,7 @@ foreach ($venta->eldetalle as $detalle) {
 
         @if(!$todosExcentos)
             <div style="text-align: center; margin: 10px 0;">
-                        <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Code" style="width: 50px; height: 50px;">
+                        <img src="data:image/png;base64,{{ $qrBase64 }}" alt="QR Code" style="width: 100px; height: 100px;">
 
             </div>
         @endif
