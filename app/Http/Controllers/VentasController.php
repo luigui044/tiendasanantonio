@@ -511,8 +511,7 @@ public function ticketRawBT2($id_venta)
     
 
     public function enviarFactura($facturaFirmada, $codigoGeneracion, $tipo_venta){
-        $url_dte = 'https://apitest.dtes.mh.gob.sv/fesv/recepciondte';
-        // Log::info('facturaFirmada: ' . json_encode($facturaFirmada));
+        $url_dte =  env('API_MH').'/recepciondte';
         switch ($tipo_venta) {
             case 2:
             

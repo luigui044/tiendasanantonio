@@ -49,14 +49,14 @@ class DTEBuilder
                         "descActividad" => $empresa->actividad_economica,
                         "nombreComercial" => $empresa->nombre_empresa,
                         "tipoEstablecimiento" => "01",
-                        "codEstableMH" => "0001",
-                        "codEstable" => "0001",
-                        "codPuntoVentaMH" => "0001",
-                        "codPuntoVenta" => "0001",
+                        "codEstableMH" => "S001",
+                        "codEstable" => "S001",
+                        "codPuntoVentaMH" => "P001",
+                        "codPuntoVenta" => "P001",
                         "direccion" => [
                             "departamento" => "02",
                             "municipio" => "17",
-                            "complemento" => $empresa->direccion_empresa
+                            "complemento" => 'CALLE LIBERTAD 3 AV. SUR,TEXISTEPEQUE, SANTA ANA'
                         ],
                         "telefono" => $empresa->telefono_empresa,
                         "correo" => $empresa->correo_empresa
@@ -163,14 +163,14 @@ class DTEBuilder
                         "descActividad" => $empresa->actividad_economica,
                         "nombreComercial" => $empresa->nombre_empresa,
                         "tipoEstablecimiento" => "01",
-                        "codEstableMH" => "0001",
-                        "codEstable" => "0001",
-                        "codPuntoVentaMH" => "0001",
-                        "codPuntoVenta" => "0001",
+                        "codEstableMH" => "S001",
+                        "codEstable" => "S001",
+                        "codPuntoVentaMH" => "P001",
+                        "codPuntoVenta" => "P001",
                         "direccion" => [
                             "departamento" => "02",
                             "municipio" => "17",
-                            "complemento" => $empresa->direccion_empresa
+                            "complemento" => 'CALLE LIBERTAD 3 AV. SUR,TEXISTEPEQUE, SANTA ANA'
                         ],
                         "telefono" => $empresa->telefono_empresa,
                         "correo" => $empresa->correo_empresa

@@ -45,7 +45,8 @@ class HomeController extends Controller
     }
 
     public function buscarProductoPorCodigo($codigo) {
-        $producto = VInventario::where('cod_bar', $codigo)->where('cantidad', '>', 0)->first();
+        $producto = VInventario::where('cod_bar', $codigo)
+        ->first();
         return response()->json($producto);
     }
 
