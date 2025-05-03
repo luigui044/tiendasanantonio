@@ -13,6 +13,53 @@ const inputBuscarProducto = document.querySelector('#buscar-producto');
 // const btnBuscarProducto = document.querySelector('#btn-buscar-producto');
 const selectProducto = document.querySelector('#select-producto');
 
+
+
+// Manejo de pasos
+document.getElementById('continuar-paso1').addEventListener('click', function () {
+    if (document.getElementById('productos-lista').children.length === 0) {
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Atención!',
+            text: 'Debe agregar al menos un producto para continuar',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+    const inputsCantidad = document.querySelectorAll('.cantidad');
+    let cantidadValida = true;
+
+    inputsCantidad.forEach(input => {
+        if (!input.value || input.value === '0') {
+            cantidadValida = false;
+            input.classList.add('is-invalid');
+
+        } else {
+            input.classList.remove('is-invalid');
+        }
+    });
+
+    if (!cantidadValida) {
+        Swal.fire({
+            icon: 'warning',
+            title: '¡Atención!',
+            text: 'Por favor revise las cantidades de los productos',
+            confirmButtonText: 'Aceptar'
+        });
+        return;
+    }
+    document.getElementById('paso1').style.display = 'none';
+    document.getElementById('paso2').style.display = 'block';
+    document.getElementById('monto').focus();
+});
+
+document.getElementById('anterior-paso2').addEventListener('click', function () {
+    document.getElementById('paso2').style.display = 'none';
+    document.getElementById('paso1').style.display = 'block';
+});
+
+
+
 document.addEventListener('DOMContentLoaded', () => {
     const inputMonto = document.querySelector('#monto');
     if (inputMonto) {
@@ -28,45 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-
-
-// Agregar producto desde el select
-// document.querySelector('#agregar-producto').addEventListener('click', () => {
-//     const productoSeleccionado = $('#select-producto').find(':selected');
-//     const codigoBarras = productoSeleccionado.val();
-//     const cantidadInput = document.querySelector('#cantidad-producto');
-
-//     if (!codigoBarras) {
-//         return;
-//     }
-
-//     const producto = productosDisponibles.find(p => p.cod_bar === codigoBarras);
-
-//     if (!producto) {
-//         return;
-//     }
-
-//     if (producto.es_granel === 1) {
-//         const cantidad = parseFloat(cantidadInput.value);
-//         if (!cantidad || cantidad <= 0) {
-//             Swal.fire({
-//                 icon: 'error',
-//                 title: 'Error',
-//                 text: 'Ingrese una cantidad válida para productos a granel',
-//                 confirmButtonText: 'Aceptar'
-//             });
-//             return;
-//         }
-//         producto.cantidad = cantidad;
-//     }
-
-//     agregarProducto(producto);
-
-//     // Limpiar selección y cantidad
-//     $('#select-producto').val(null).trigger('change.select2');
-//     document.querySelector('#cantidad-producto').value = '';
-//     document.querySelector('#cantidad-producto').disabled = true;
-// });
 
 
 
@@ -163,7 +171,7 @@ function agregarProducto(producto) {
         calcularTotal();
         return;
     }
-    console.log(producto);
+
     // Validar si el producto tiene cantidad y es a granel
     if (producto.es_granel === 1) {
         // Es producto a granel, usar la cantidad especificada
