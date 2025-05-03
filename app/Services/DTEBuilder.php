@@ -107,24 +107,25 @@ class DTEBuilder
 
             foreach($venta->eldetalle as $index => $detalle) {
                 if($detalle->elproducto->banexcento == 0) {
+                    $contadorItems = count($json["dteJson"]["cuerpoDocumento"]) + 1;
                     $json["dteJson"]["cuerpoDocumento"][] = [
-                        "numItem" => $index + 1,
+                        "numItem" => $contadorItems,
                         "tipoItem" => 2,
                         "numeroDocumento" => null,
                         "codigo" => $detalle->elproducto->cod_bar,
                         "codTributo" => null,
-                    "cantidad" => $detalle->cantidad,
-                    "uniMedida" => $detalle->elproducto->unidad_medida_mh,
-                    "descripcion" => $detalle->elproducto->producto,
-                    "precioUni" => round($detalle->precio_iva, 2),
+                        "cantidad" => $detalle->cantidad,
+                        "uniMedida" => $detalle->elproducto->unidad_medida_mh,
+                        "descripcion" => $detalle->elproducto->producto,
+                        "precioUni" => round($detalle->precio_iva, 2),
                         "montoDescu" => 0.0,
-                    "ventaNoSuj" => 0.0,
-                    "ventaExenta" => 0.0,
-                    "ventaGravada" => round($detalle->precio_iva * $detalle->cantidad, 2),
-                    "tributos" => null,
-                    "psv" => 0.0,
-                    "noGravado" => 0.0,
-                    "ivaItem" => round( ($detalle->precio_iva - $detalle->precio) * $detalle->cantidad, 2)
+                        "ventaNoSuj" => 0.0,
+                        "ventaExenta" => 0.0,
+                        "ventaGravada" => round($detalle->precio_iva * $detalle->cantidad, 2),
+                        "tributos" => null,
+                        "psv" => 0.0,
+                        "noGravado" => 0.0,
+                        "ivaItem" => round( ($detalle->precio_iva - $detalle->precio) * $detalle->cantidad, 2)
                     ];
                 }
             }
@@ -238,24 +239,26 @@ class DTEBuilder
         ];
 
         foreach($venta->eldetalle as $index => $detalle) {
-            $json["dteJson"]["cuerpoDocumento"][] = [
-                "numItem" => $index + 1,
-                "tipoItem" => 2,
-                "numeroDocumento" => null,
-                "codigo" => $detalle->elproducto->cod_bar,
-                "codTributo" => null,
-                "descripcion" => $detalle->elproducto->producto,
-                "cantidad" => $detalle->cantidad,
-                "uniMedida" => $detalle->elproducto->unidad_medida_mh,
-                "precioUni" => round($detalle->precio, 2),
-                "montoDescu" => 0.0,
-                "ventaNoSuj" => 0.0,
-                "ventaExenta" => 0.0,
-                "ventaGravada" => round($detalle->precio * $detalle->cantidad, 2),
-                "tributos" => ["20"],
-                "psv" => 0.0,
-                "noGravado" => 0.0
-            ];
+            if ($detalle->elproducto->banexcento != 1) {
+                $json["dteJson"]["cuerpoDocumento"][] = [
+                    "numItem" => count($json["dteJson"]["cuerpoDocumento"]) + 1,
+                    "tipoItem" => 2,
+                    "numeroDocumento" => null,
+                    "codigo" => $detalle->elproducto->cod_bar,
+                    "codTributo" => null,
+                    "descripcion" => $detalle->elproducto->producto,
+                    "cantidad" => $detalle->cantidad,
+                    "uniMedida" => $detalle->elproducto->unidad_medida_mh,
+                    "precioUni" => round($detalle->precio, 2),
+                    "montoDescu" => 0.0,
+                    "ventaNoSuj" => 0.0,
+                    "ventaExenta" => 0.0,
+                    "ventaGravada" => round($detalle->precio * $detalle->cantidad, 2),
+                    "tributos" => ["20"],
+                    "psv" => 0.0,
+                    "noGravado" => 0.0
+                ];
+            }
         }
 
         return $json;
