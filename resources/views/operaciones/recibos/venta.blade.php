@@ -226,7 +226,9 @@ foreach ($venta->eldetalle as $detalle) {
 
         @if(!$todosExcentos)
             <div style="text-align: center; margin: 10px 0;">
-            {!! $qrCode !!}
+            @if(isset($qrCode) && !empty($qrCode))
+                {!! $qrCode !!}
+            @endif
             </div>
         @endif
         <p>¡Gracias por su compra!</p>
