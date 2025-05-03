@@ -172,7 +172,10 @@ class VentasController extends Controller
     public function generarNumeroControlExento() {
         $bodega = env('BODEGA');
         $establecimiento = Bodega::where('id_bodega', $bodega)->first();
-        $ultimaVenta = Venta::orderBy('id_venta', 'desc')->where('numero_control', 'like', 'DTE-none-%')->first();
+        $ultimaVenta = Venta::orderBy('id_venta', 'desc')
+            ->where('numero_control', 'like', 'DTE-none-%')
+            // Se eliminó el filtro de tipo_venta ya que no es necesario
+            ->first();
         $ultimoNumero = $ultimaVenta ? intval(substr($ultimaVenta->numero_control, -12)) : 0;
         $nuevoNumero = str_pad($ultimoNumero + 1, 15, '0', STR_PAD_LEFT);
         return "DTE-none-{$establecimiento->cod_dte}-{$nuevoNumero}";
@@ -227,15 +230,18 @@ class VentasController extends Controller
     {
         $bodega = env('BODEGA');
         $establecimiento = Bodega::where('id_bodega', $bodega)->first();
-        $ultimaVenta = Venta::orderBy('id_venta', 'desc')->first();
+        
+        // Obtener el último número de control existente
+        $ultimaVenta = Venta::where('numero_control', 'like', "DTE-{$tipo_venta}-{$establecimiento->cod_dte}%")
+            ->orderBy('id_venta', 'desc')
+            ->first();
+            
         $ultimoNumero = $ultimaVenta ? intval(substr($ultimaVenta->numero_control, -12)) : 0;
-        $nuevoNumero = str_pad($ultimoNumero + 1, 15, '0', STR_PAD_LEFT);
-        if ($tipo_venta == 2) {
-            $numeroControl = "DTE-03-{$establecimiento->cod_dte}-{$nuevoNumero}";
-            return $numeroControl;
-        }
-
-        $numeroControl = "DTE-01-{$establecimiento->cod_dte}-{$nuevoNumero}";
+        $nuevoNumero = str_pad($ultimoNumero + 1, 12, '0', STR_PAD_LEFT);
+        
+        $tipoDTE = $tipo_venta == 2 ? '03' : '01';
+        $numeroControl = "DTE-{$tipoDTE}-{$establecimiento->cod_dte}-{$nuevoNumero}";
+        
         return $numeroControl;
     }
 
