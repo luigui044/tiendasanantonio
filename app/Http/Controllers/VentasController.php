@@ -392,7 +392,7 @@ public function ticketRawBT2($id_venta)
                 $tipo_venta = $venta->tipo_venta;
                 $json = DTEBuilder::build($venta, $empresa, $tipo_venta);
                 
-
+Log::info('json: ' . json_encode($json));
 
                 $response = Http::post($firmarDTE, $json); 
                 $facturaFirmada = $response->json()['body'];
