@@ -237,11 +237,18 @@ class VentasController extends Controller
             ->first();
             
         $ultimoNumero = $ultimaVenta ? intval(substr($ultimaVenta->numero_control, -15)) : 0;
-        Log::info('ultimoNumero: ' . $ultimoNumero);
-        $nuevoNumero = str_pad($ultimoNumero + 1, 15, '0', STR_PAD_LEFT);
         
-        $tipoDTE = $tipo_venta == 2 ? '03' : '01';
-        $numeroControl = "DTE-{$tipoDTE}-{$establecimiento->cod_dte}-{$nuevoNumero}";
+        // Verificar si el número ya existe
+        do {
+            $nuevoNumero = str_pad($ultimoNumero + 1, 15, '0', STR_PAD_LEFT);
+            $tipoDTE = $tipo_venta == 2 ? '03' : '01';
+            $numeroControl = "DTE-{$tipoDTE}-{$establecimiento->cod_dte}-{$nuevoNumero}";
+            
+            $existe = Venta::where('numero_control', $numeroControl)->exists();
+            if ($existe) {
+                $ultimoNumero++;
+            }
+        } while ($existe);
         
         return $numeroControl;
     }

@@ -97,7 +97,7 @@ class HomeController extends Controller
     ->where('estado_venta_id', 1)
     ->where('fecha_hora', '>', now()->subHours(48))
     ->count();
-           Log::info("ventasPendientes: $ventasPendientes");
+        //    Log::info("ventasPendientes: $ventasPendientes");
 
 
         if (!is_numeric($id))
