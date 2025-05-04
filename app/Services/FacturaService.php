@@ -38,7 +38,7 @@ class FacturaService
             $logoBase64 = base64_encode(file_get_contents($logoPath));
 
             // Generar URL para el QR
-            $urlFactura = 'https://admin.factura.gob.sv/consultaPublica?ambiente='.env('AMBIENTE_DTE').'&codGen='.$venta->uuid.'&fechaEmi='.date_format(date_create($venta->fecha_hora), 'Y-m-d');
+            $urlFactura = 'https://admin.factura.gob.sv/consultaPublica?ambiente='.config('custom.ambiente_dte') .'&codGen='.$venta->uuid.'&fechaEmi='.date_format(date_create($venta->fecha_hora), 'Y-m-d');
             
             // Generar QR como base64
             $qrCode = QrCode::format('png')

@@ -76,7 +76,7 @@ class VentasController extends Controller
                 'numero_control' => $todosExentos ? $this->generarNumeroControlExento() : $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
                 'id_usuario' => auth()->id(),
-                'id_sucursal' => env('BODEGA'),
+                'id_sucursal' => config('custom.bodega') ,
                 'iva' => ($request->total / 1.13) * 0.13,
                 'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0,
                 
@@ -185,7 +185,7 @@ class VentasController extends Controller
     }
 
     public function generarNumeroControlExento() {
-        $bodega = env('BODEGA');
+        $bodega = config('custom.bodega') ;
         $establecimiento = Bodega::where('id_bodega', $bodega)->first();
         $ultimaVenta = Venta::orderBy('id_venta', 'desc')
             ->where('numero_control', 'like', 'DTE-none-%')
@@ -214,7 +214,7 @@ class VentasController extends Controller
                 'numero_control' => $this->generarNumeroControl($request->tipo_venta),
                 'tipo_venta' => $request->tipo_venta,
                 'id_usuario' => auth()->id(),
-                'id_sucursal' => env('BODEGA'),
+                'id_sucursal' => config('custom.bodega') ,
                 'iva' => ($request->total / 1.13) * 0.13,
                 'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0,
                 'monto_recibido' => $request->monto,
@@ -259,7 +259,7 @@ class VentasController extends Controller
 
     private function generarNumeroControl($tipo_venta)
     {
-        $bodega = env('BODEGA');
+        $bodega = config('custom.bodega') ;
         $establecimiento = Bodega::where('id_bodega', $bodega)->first();
         
         // Obtener el último número de control existente
@@ -552,7 +552,7 @@ Log::info('json: ' . json_encode($json));
     
 
     public function enviarFactura($facturaFirmada, $codigoGeneracion, $tipo_venta){
-        $url_dte =  env('API_MH').'/recepciondte';
+        $url_dte =  config('custom.api_mh').'/recepciondte';
         switch ($tipo_venta) {
             case 2:
             
@@ -565,7 +565,7 @@ Log::info('json: ' . json_encode($json));
                 $version = 1;
                 break;
         }
-            $ambiente = env('AMBIENTE_DTE');
+            $ambiente = config('custom.ambiente_dte');
         $envio = 1;
 
         if (!Cache::has('hacienda_bearer_token')) {

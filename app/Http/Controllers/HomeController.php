@@ -180,7 +180,7 @@ class HomeController extends Controller
         ->get();
         $departamentos = CatDepartamento::all();
         $actividades = CatActividadesEconomica::all();
-        $bodega = env('BODEGA');
+        $bodega = config('custom.bodega');
 
         $productos = VInventario::where('id_bodega', $bodega)->orWhere('es_granel', 1)->get();
         
@@ -190,7 +190,7 @@ class HomeController extends Controller
     public function creditoFiscal()
     {
         $clientes = Cliente::where('estado', 1)->get();
-        $bodega = env('BODEGA');
+        $bodega = config('custom.bodega');
         $productos = VInventario::where('id_bodega', $bodega)->where('cantidad', '>', 0)->get();
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes'));
     }

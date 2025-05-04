@@ -64,7 +64,7 @@ class DTEBuilder
             "dteJson" => [
                 "identificacion" => [
                     "version" => 1,
-                    "ambiente" => env('AMBIENTE_DTE'),
+                    "ambiente" => config('custom.ambiente_dte'),
                     "tipoDte" => "01",
                     "numeroControl" => $venta->numero_control,
                     "codigoGeneracion" => (string)$venta->uuid,
@@ -203,7 +203,7 @@ class DTEBuilder
           "dteJson" => [
               "identificacion" => [
                   "version" => 3,
-                  "ambiente" => env('AMBIENTE_DTE'),
+                  "ambiente" => config('custom.ambiente_dte'),
                   "tipoDte" => "03",
                   "numeroControl" => $venta->numero_control,
                   "codigoGeneracion" => (string)$venta->uuid,

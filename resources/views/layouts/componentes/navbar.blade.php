@@ -57,7 +57,7 @@
                     {{ auth()->user()->name }}
                 </span>
                 <span class="navbar-text " style="margin-left: 3px;border-right: 1px solid #fff; margin-right: 4px;">
-                    AMBIENTE: {{ env('AMBIENTE_DTE') == 01 ? 'PRODUCCION' : 'PRUEBA' }}	
+                    AMBIENTE: {{ config('custom.ambiente_dte') == 01 ? 'PRODUCCION' : 'PRUEBA' }}	
                 </span>
                 <form method="POST" action="{{ route('logout') }}" class="d-none" id="frm-logout">@csrf</form>
                 <button type="submit" form="frm-logout" class="btn btn-danger bg-rojo">

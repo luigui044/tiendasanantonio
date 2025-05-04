@@ -133,7 +133,7 @@ $parte2Str = implode(' ', $parte2);
         <p>NRC: {{ substr($empresa->nrc, 0, 6) }}-{{ substr($empresa->nrc, 6) }}</p>
         <p>Actividad económica: {{ $empresa->actividad_economica }}</p>
         <p>{{ $empresa->direccion_empresa }}</p>
-        <p>Sucursal #{{ env('BODEGA') }}</p>
+        <p>Sucursal #{{ config('custom.bodega')  }}</p>
         <p>Teléfono: {{ $empresa->telefono_empresa }}</p>
         <p>WhatsApp: {{ $empresa->celular_empresa }}</p>
         <p >Correo</p>
@@ -144,7 +144,7 @@ $parte2Str = implode(' ', $parte2);
             <p>Número de control: {{ $venta->numero_control }}</p>
             <p>Sello de recepción: {{ $venta->sello_recibido }}</p>
             <p>Modelo de transmisión: Normal</p>
-            <p>Tipo de Establecimiento: {{ env('BODEGA') == 1 ? 'Matriz' : 'Sucursal / Agencia' }}</p>
+            <p>Tipo de Establecimiento: {{ config('custom.bodega')  == 1 ? 'Matriz' : 'Sucursal / Agencia' }}</p>
         @endif
     </div>
 
