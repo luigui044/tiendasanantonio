@@ -56,9 +56,12 @@
                     <i class="fa-solid fa-user me-1"></i>
                     {{ auth()->user()->name }}
                 </span>
-                <span class="navbar-text " style="margin-left: 3px;border-right: 1px solid #fff; margin-right: 4px;">
-                    AMBIENTE: {{ config('custom.ambiente_dte') == 01 ? 'PRODUCCION' : 'PRUEBA' }}	
-                </span>
+                @if(config('custom.ambiente_dte') == 00)
+                    <span class="navbar-text " style="margin-left: 3px;border-right: 1px solid #fff; margin-right: 4px;">
+                        AMBIENTE: PRUEBA	
+                    </span>
+             
+                @endif
                 <form method="POST" action="{{ route('logout') }}" class="d-none" id="frm-logout">@csrf</form>
                 <button type="submit" form="frm-logout" class="btn btn-danger bg-rojo">
                     <i class="fa-solid fa-power-off me-1"></i>
