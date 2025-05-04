@@ -8,7 +8,6 @@
     <meta name="theme-color" content="#0d6efd">
     
     <!-- Iconos para dispositivos -->
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
 
     <title>@yield('titulo') | Tienda San Antonio</title>
     @yield('csrf')
