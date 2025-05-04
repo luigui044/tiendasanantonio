@@ -101,7 +101,7 @@ class Inventario extends Controller
 
             if (!$request->cod_bar) {
                 $producto->update([
-                    'cod_bar' => 'SAN' . date('Y') . str_pad($producto->id_prod, 8, '0', STR_PAD_LEFT)
+                    'cod_bar' => 'SAN' . date('Y') . str_pad($producto->id_prod, 5, '0', STR_PAD_LEFT)
                 ]);
             }
         } catch (Exception $e) {
