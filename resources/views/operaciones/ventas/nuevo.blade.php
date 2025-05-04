@@ -240,7 +240,48 @@
 @section('scripts')
     <script>
         const productosDisponibles = @json($productos);
-  
+    document.getElementById('continuar-paso1').addEventListener('click', function () {
+        if (document.getElementById('productos-lista').children.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Atención!',
+                text: 'Debe agregar al menos un producto para continuar',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+        const inputsCantidad = document.querySelectorAll('.cantidad');
+        let cantidadValida = true;
+
+        inputsCantidad.forEach(input => {
+            if (!input.value || input.value === '0') {
+                cantidadValida = false;
+                input.classList.add('is-invalid');
+
+            } else {
+                input.classList.remove('is-invalid');
+            }
+        });
+
+        if (!cantidadValida) {
+            Swal.fire({
+                icon: 'warning',
+                title: '¡Atención!',
+                text: 'Por favor revise las cantidades de los productos',
+                confirmButtonText: 'Aceptar'
+            });
+            return;
+        }
+        document.getElementById('paso1').style.display = 'none';
+        document.getElementById('paso2').style.display = 'block';
+        document.getElementById('monto').focus();
+    });
+
+    document.getElementById('anterior-paso2').addEventListener('click', function () {
+        document.getElementById('paso2').style.display = 'none';
+        document.getElementById('paso1').style.display = 'block';
+    });
+
 
     </script>
     <script type="text/javascript" src="{{ asset('assets/js/pages/codigo-barras.js') }}"></script>
