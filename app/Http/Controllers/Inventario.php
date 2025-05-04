@@ -90,6 +90,15 @@ class Inventario extends Controller
                 'cod_bar' => $request->cod_bar ?: 'SAN' . date('Y') . str_pad(Producto::max('id_prod') + 1, 8, '0', STR_PAD_LEFT)
             ]);
 
+            $bodegas = [1, 2];
+            foreach ($bodegas as $bodega) {
+                TInventario::create([
+                    'producto' => $producto->id_prod,
+                    'cantidad' => 999999999,
+                    'ubicacion' => $bodega
+                ]);
+            }
+
             if (!$request->cod_bar) {
                 $producto->update([
                     'cod_bar' => 'SAN' . date('Y') . str_pad($producto->id_prod, 8, '0', STR_PAD_LEFT)
