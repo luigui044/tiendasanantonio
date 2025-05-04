@@ -5,6 +5,7 @@
             aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
@@ -50,6 +51,14 @@
 
             </ul>
             <div>
+
+                <span class="navbar-text mr-2" style="border-right: 1px solid #fff;">
+                    <i class="fa-solid fa-user me-1"></i>
+                    {{ auth()->user()->name }}
+                </span>
+                <span class="navbar-text " style="margin-left: 3px;border-right: 1px solid #fff; margin-right: 4px;">
+                    AMBIENTE: {{ env('AMBIENTE_DTE') == 01 ? 'PRODUCCION' : 'PRUEBA' }}	
+                </span>
                 <form method="POST" action="{{ route('logout') }}" class="d-none" id="frm-logout">@csrf</form>
                 <button type="submit" form="frm-logout" class="btn btn-danger bg-rojo">
                     <i class="fa-solid fa-power-off me-1"></i>
