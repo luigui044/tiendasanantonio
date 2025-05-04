@@ -78,14 +78,23 @@ class VentasController extends Controller
                 'id_usuario' => auth()->id(),
                 'id_sucursal' => env('BODEGA'),
                 'iva' => ($request->total / 1.13) * 0.13,
-                'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0
+                'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0,
+                
+                'monto_recibido' => $request->monto,
+                'cambio' => $request->cambio
             ]);
 
+            $total_sin_excentos = 0;
+            $total_sin_excentos_con_iva = 0;
+
             // Crear detalles de venta optimizado
-            $detalles = collect($request->producto)->map(function($producto) use ($venta, $productos) {
+            $detalles = collect($request->producto)->map(function($producto) use ($venta, $productos, &$total_sin_excentos, &$total_sin_excentos_con_iva) {
                 [$codBar, $cantidad, $precio, $descuento] = explode(';', $producto);
                 $producto = $productos[$codBar];
-                
+                if ($producto->banexcento == 0) {
+                    $total_sin_excentos += round(($precio * $cantidad) / 1.13, 2);
+                    $total_sin_excentos_con_iva += round($precio * $cantidad, 2);
+                } 
                 return [
                     'id_venta' => $venta->id_venta,
                     'producto' => $producto->id_prod,
@@ -97,7 +106,13 @@ class VentasController extends Controller
             });
 
             DetalleVenta::insert($detalles->toArray());
-        
+         
+            $venta->update([
+                'total_sin_excentos' => $total_sin_excentos,
+                'total_sin_excentos_con_iva' => $total_sin_excentos_con_iva,
+            ]);
+
+            $venta->refresh();
             // Generar factura
             try {
                 if(!$todosExentos) {
@@ -114,7 +129,7 @@ class VentasController extends Controller
                      
                             event(new FacturaGenerada($venta));
                             $venta->refresh(); // Recargar el modelo para obtener los datos actualizados    
-                            Log::info('venta: ' . json_encode($venta));
+                          //  Log::info('venta: ' . json_encode($venta));
                             // Enviar correo después de generar los archivos
                             if ($venta->url_pdf && $venta->url_json) {
                                 // Log::info('Enviando correo a: ' . $venta->elcliente->correo);
@@ -184,6 +199,8 @@ class VentasController extends Controller
     public function guardarVenta(Request $request)
     {
         try {
+           
+       
        $venta = Venta::create([
                 'id_vendedor' => auth()->id(),
                 'cliente' => $request->cliente ?: null,
@@ -199,15 +216,24 @@ class VentasController extends Controller
                 'id_usuario' => auth()->id(),
                 'id_sucursal' => env('BODEGA'),
                 'iva' => ($request->total / 1.13) * 0.13,
-                'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0
+                'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0,
+                'monto_recibido' => $request->monto,
+                'cambio' => $request->cambio
 
             ]);
 
             // Crear detalles de venta
-            $detalles = collect($request->producto)->map(function($producto) use ($venta) {
+            $total_sin_excentos = 0;
+            $total_sin_excentos_con_iva = 0;
+
+            $detalles = collect($request->producto)->map(function($producto) use ($venta, &$total_sin_excentos, &$total_sin_excentos_con_iva) {
                 [$codBar, $cantidad, $precio, $descuento] = explode(';', $producto);
                 $producto = Producto::where('cod_bar', $codBar)->first();
                 
+                if ($producto->banexcento == 0) {
+                    $total_sin_excentos += round(($precio * $cantidad) / 1.13, 2);
+                    $total_sin_excentos_con_iva += round($precio * $cantidad, 2);
+                } 
                 return [
                     'id_venta' => $venta->id_venta,
                     'producto' => $producto->id_prod,
@@ -220,6 +246,11 @@ class VentasController extends Controller
 
             DetalleVenta::insert($detalles->toArray());
 
+            $venta->update([
+                'total_sin_excentos' => $total_sin_excentos,
+                'total_sin_excentos_con_iva' => $total_sin_excentos_con_iva,
+             
+            ]);
             return response()->json(['success' => 'Venta guardada con éxito', 'id_venta' => $venta->id_venta]);
         } catch (Exception $error) {
             return response()->json(['error' => 'Ocurrió un error al guardar la venta.']);

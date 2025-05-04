@@ -38,6 +38,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property float|null $iva_percibido
  * @property int|null $estado_venta_id
  * @property string|null $sello_recibido
+ * @property float|null $total_sin_excentos
+ * @property float|null $total_sin_excentos_con_iva
+ * @property float|null $monto_recibido
+ * @property float|null $cambio
  * @package App\Models
  */
 class Venta extends Model
@@ -73,7 +77,11 @@ class Venta extends Model
 		'iva_percibido',
 		'estado_venta_id',
 		'sello_recibido',
-		'url_json'
+		'url_json',
+		'total_sin_excentos',
+		'total_sin_excentos_con_iva',
+		'monto_recibido',
+		'cambio'
 	];
 
 	public function elcliente()
