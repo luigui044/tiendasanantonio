@@ -211,6 +211,10 @@ $parte2Str = implode(' ', $parte2);
             @endif
         @endif
         <p>--------------------------------</p>
+
+        <p>Monto recibido: ${{ number_format($venta->monto_recibido, 2) }}</p>
+        <p>Cambio: ${{ number_format($venta->cambio, 2) }}</p>
+        <p>--------------------------------</p>
     </div>
 
     <div class="footer">
