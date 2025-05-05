@@ -139,8 +139,7 @@ class Inventario extends Controller
     }
 
     public function eliminarProducto($id) {
-        $producto = Producto::findOrFail($id);
-        $producto->delete();
+        Producto::where('id_prod', $id)->update(['estado' => 3]);
         return response()->json([
             'success' => true,
             'mensaje' => 'Producto eliminado éxitosamente'

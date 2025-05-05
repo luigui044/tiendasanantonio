@@ -45,13 +45,17 @@ class HomeController extends Controller
     }
 
     public function buscarProductoPorCodigo($codigo) {
-        $producto = VInventario::where('cod_bar', $codigo)
+        $producto = VInventario::where('cod_bar', $codigo)  
+        ->where('estado', 1)
         ->first();
         return response()->json($producto);
     }
 
     public function buscarProductos(Request $request) {
-        $productos = VInventario::where('producto', 'like', '%' . $request->term . '%')->orWhere('cod_bar', 'like', '%' . $request->term . '%')->get();
+        $productos = VInventario::where(function($query) use ($request) {
+            $query->where('producto', 'like', '%' . $request->term . '%')
+                  ->orWhere('cod_bar', 'like', '%' . $request->term . '%');
+        })->where('estado', 1)->get();
         return response()->json($productos);
     }
    
@@ -182,7 +186,12 @@ class HomeController extends Controller
         $actividades = CatActividadesEconomica::all();
         $bodega = config('custom.bodega');
 
-        $productos = VInventario::where('id_bodega', $bodega)->orWhere('es_granel', 1)->get();
+        $productos = VInventario::where('estado', 1)
+            ->where(function($query) use ($bodega) {
+                $query->where('id_bodega', $bodega)
+                      ->orWhere('es_granel', 1);
+            })
+            ->get();
         
         return view('operaciones.ventas.nuevo', compact('productos', 'clientes', 'tipoCliente', 'departamentos', 'actividades' ));
     }

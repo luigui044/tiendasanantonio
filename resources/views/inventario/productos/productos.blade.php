@@ -208,7 +208,7 @@
                                             <th class="text-white">SKU</th>
                                             <th class="text-white">Producto</th>
                                             <th class="text-white">Precio</th>
-                                            <th class="text-white">Descripción</th>
+                                            <th class="text-white">Estado</th>
                                                    <th class="text-white">Unidad de medida</th>
                                             <th class="text-white">Opciones</th>
 
@@ -220,7 +220,21 @@
                                                 <td>{{ $item->cod_bar }}</td>
                                                 <td>{{ $item->producto }}</td>
                                                 <td>${{ number_format($item->precio, 2) }}</td>
-                                                <td>{{ $item->descripcion }}</td>
+                                                <td>@switch($item->estado)
+                                                    @case(1)
+                                                        <span class="badge bg-success">Activo   </span>
+                                                        @break
+                                                    @case(2)
+                                                        <span class="badge bg-warning">Inactivo</span>
+                                                        @break
+                                                    @case(3)
+                                                        <span class="badge bg-danger">Eliminado</span>
+                                                        @break
+                                                    @default
+                                                        <span class="badge bg-warning">Desconocido</span>
+                                                        @break
+                                                    @endswitch
+                                                </td>
                                                  <td>{{ $item->unidad_medida }}</td>
                                                 <td>
                                                     <div class="d-flex gap-2">
@@ -293,7 +307,11 @@
                                             'Producto eliminado correctamente',
                                             'success'
                                         ).then(() => {
-                                            document.getElementById(`producto-${id}`).remove();
+                                            const row = document.getElementById(`producto-${id}`);
+                                            const estadoBadge = row.querySelector('.badge');
+                                            estadoBadge.textContent = 'Eliminado';
+                                            estadoBadge.classList.remove('bg-success');
+                                            estadoBadge.classList.add('bg-danger');
                                         });
                                     } else {
                                         Swal.fire(
