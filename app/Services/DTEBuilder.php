@@ -33,8 +33,8 @@ class DTEBuilder
                 $precioUnitario = round($detalle->precio, 2);
                 $precioUnitarioIva = round($detalle->precio_iva, 2);
                            $cantidad = $detalle->cantidad;
-                $ivaUnitario = round($precioUnitario * 0.13, 2);
-                $montoIva = round($ivaUnitario * $cantidad, 2);
+                
+                $montoIva =  self::redondeoMH(($precioUnitario * 0.13) * $cantidad);
                 $ventaGravada = round($precioUnitarioIva * $cantidad, 2);
 
                 $totalGravado += $ventaGravada;
@@ -162,7 +162,7 @@ class DTEBuilder
                 "ivaItem" => round($item['montoIva'], 2)
             ];
         }
-
+        Log::info('json: ' . json_encode($json));
         return $json;
     }
 
