@@ -156,7 +156,7 @@ $parte2Str = implode(' ', $parte2);
         <p>Nombre o Razón Social: {{ $venta->elcliente->nombre }}</p>
         @if($venta->elcliente->tipo_cliente != '1')
             <p>Nombre Comercial: {{ $venta->elcliente->nombre }}</p>
-            <p>NIT: {{ $venta->elcliente->nit }}</p>
+            <p>NIT: {{ $venta->elcliente->credito_fiscal }}</p>
             <p>NRC: {{ $venta->elcliente->nrc }}</p>
         @endif
         @if($venta->elcliente->tipo_cliente == '1')
