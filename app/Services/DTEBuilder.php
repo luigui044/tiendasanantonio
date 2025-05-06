@@ -274,19 +274,19 @@ class DTEBuilder
                       ]
                   ],
                   "subTotal" =>      $totalGravadoSinIva,
-                  "ivaPerci1" => $totalGravadoSinIva > 100 ? $ivaPercibido : 0.0,
+                  "ivaPerci1" =>  $venta->elcliente->ban_g_contribuyente == 1 && $totalGravadoSinIva > 100 ? $ivaPercibido : 0.0,
                   "ivaRete1" => 0.0,
                   "reteRenta" => 0.0,
                   "montoTotalOperacion" => $totalGravado,
                   "totalNoGravado" => 0.0,
-                  "totalPagar" => $totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado,
-                  "totalLetras" => self::convertirNumeroALetras($totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado),
+                  "totalPagar" => $venta->elcliente->ban_g_contribuyente == 1 && $totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado,
+                  "totalLetras" => self::convertirNumeroALetras($venta->elcliente->ban_g_contribuyente == 1 && $totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado),
                   "saldoFavor" => 0.0,
                   "condicionOperacion" => 1,
                   "pagos" => [
                       [
                           "codigo" => "01",
-                          "montoPago" =>$totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado,
+                          "montoPago" =>$venta->elcliente->ban_g_contribuyente == 1 && $totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado,
                           "referencia" => null,
                           "plazo" => null,
                           "periodo" => null

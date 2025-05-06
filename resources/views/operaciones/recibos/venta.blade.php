@@ -210,16 +210,21 @@ $sumas = 0; @endphp
 
             <p>Subtotal: ${{ number_format($sumas, 2) }}</p>
                 @php
+                $iva = $sumas * 0.13;
     $totalConIva = $sumas * 1.13;
                 @endphp
-            <p>IVA 13%: ${{ number_format($totalConIva, 2) }}</p>
+            <p>IVA 13%: ${{ number_format($iva, 2) }}</p>
             @if($totalConIva >= 100)
                 @php    
                     $ivaPercibido = $sumas * 0.01;
                     
                 @endphp
-                <p>IVA Percibido 1%: ${{ number_format($ivaPercibido, 2) }}</p>
-                <p>TOTAL: ${{ number_format($totalConIva + $ivaPercibido, 2) }}</p>
+                @if($venta->elcliente->ban_g_contribuyente == 1)
+                    <p>IVA Percibido 1%: ${{ number_format($ivaPercibido, 2) }}</p>
+                    <p>TOTAL: ${{ number_format($totalConIva + $ivaPercibido, 2) }}</p>
+                @else
+                    <p>TOTAL: ${{ number_format($totalConIva, 2) }}</p>
+                @endif
             @else
                 <p>TOTAL: ${{ number_format($totalConIva, 2) }}</p>
             @endif
@@ -229,7 +234,11 @@ $sumas = 0; @endphp
             <p>Monto recibido: ${{ number_format($venta->monto_recibido, 2) }}</p>
             <p>Cambio: ${{ number_format($venta->cambio, 2) }}</p>
         @else
-            <p>Monto recibido:  ${{ number_format($totalConIva + $ivaPercibido, 2) }}</p>
+            @if($venta->elcliente->ban_g_contribuyente == 1)
+                <p>Monto recibido:  ${{ number_format($totalConIva + $ivaPercibido, 2) }}</p>
+            @else
+                <p>Monto recibido:  ${{ number_format($totalConIva, 2) }}</p>
+            @endif
             <p>Cambio: $ 0.00</p>
         @endif
         <p>--------------------------------</p>

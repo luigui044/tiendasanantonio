@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $tipo_cliente
  * @property string $cod_actividad_economica
  * @property string $des_actividad_economica
+ * @property int $ban_g_contribuyente
  * 
  *
  * @package App\Models
@@ -51,7 +52,8 @@ class Cliente extends Model
 		'id_municipio',
 		'tipo_cliente',
 		'cod_actividad_economica',
-		'des_actividad_economica'
+		'des_actividad_economica',
+		'ban_g_contribuyente'
 	];
 
 	public function estado()
