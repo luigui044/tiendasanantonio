@@ -142,9 +142,10 @@ $parte2Str = implode(' ', $parte2);
             <p>Fecha y hora de emisión: {{ date_format(date_create($venta->fecha_hora), 'd/m/Y H:i:s') }}</p>
             <p>Código de generación: {{ $venta->uuid }}</p>
             <p>Número de control: {{ $venta->numero_control }}</p>
-            <p>Sello de recepción: {{ $venta->sello_recibido }}</p>
-            <p>Modelo de transmisión: Normal</p>
-            <p>Tipo de Establecimiento: {{ config('custom.bodega')  == 1 ? 'Matriz' : 'Sucursal / Agencia' }}</p>
+            <p>Sello de recepción:</p>
+            <p style="font-size: 7.5px;">{{ $venta->sello_recibido }}</p>
+            <p >Modelo de transmisión: Normal</p>
+            <p>Tipo de Establecimiento: {{ config('custom.bodega') == 1 ? 'Matriz' : 'Sucursal / Agencia' }}</p>
         @endif
     </div>
 
@@ -158,8 +159,10 @@ $parte2Str = implode(' ', $parte2);
             <p>NIT: {{ $venta->elcliente->nit }}</p>
             <p>NRC: {{ $venta->elcliente->nrc }}</p>
         @endif
-        <p>Tipo de Doc. de identificación: {{ $venta->elcliente->tipo_cliente == '1' ? 'DUI' : '' }}</p>
-        <p>Núm. Doc: {{ $venta->elcliente->tipo_cliente == '1' ? $venta->elcliente->dui : '' }}</p>
+        @if($venta->elcliente->tipo_cliente == '1')
+            <p>Tipo de Doc. de identificación: {{ $venta->elcliente->tipo_cliente == '1' ? 'DUI' : '' }}</p>
+            <p>Núm. Doc: {{ $venta->elcliente->tipo_cliente == '1' ? $venta->elcliente->dui : '' }}</p>
+        @endif
         @if($venta->elcliente->direccion)
             <p>Dirección: {{ $venta->elcliente->direccion }}</p>
         @endif
@@ -173,22 +176,25 @@ $parte2Str = implode(' ', $parte2);
     </div>
 
     <table class="productos">
-        @php $descuentos = 0; @endphp
+        @php $descuentos = 0;
+$excentos = 0;
+$sumas = 0; @endphp
         @foreach ($venta->eldetalle as $detalle)
-            @php $descuentos += $detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad; @endphp
-            <tr>
-                <td class="nombre-producto" colspan="2">{{ $detalle->elproducto->producto }}</td>
-            </tr>
-            <tr>
-                <td class="cantidadproducto">{{ $detalle->cantidad }} x ${{ number_format($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio, 2) }}</td>
-                <td class="subtotalproducto">${{ number_format($detalle->cantidad * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio), 2) }}</td>
-            </tr>
-            @if($detalle->descuento > 0)
+            @php 
+            if ($detalle->elproducto->banexcento == 0) {
+        $sumas += $detalle->cantidad * $detalle->precio;
+    }
+            @endphp
+            @if($venta->elcliente->tipo_cliente == '1' || $detalle->elproducto->banexcento != 1)
                 <tr>
-                    <td>Descuento:</td>
-                    <td>-${{ number_format($detalle->descuento * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio) * $detalle->cantidad, 2) }}</td>
+                    <td class="nombre-producto" colspan="2">{{ $detalle->elproducto->producto }}</td>
+                </tr>
+                <tr>
+                    <td class="cantidadproducto">{{ $detalle->cantidad }} x ${{ number_format($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio, 2) }}</td>
+                    <td class="subtotalproducto">${{ number_format($detalle->cantidad * ($venta->elcliente->tipo_cliente == '1' ? $detalle->precio_iva : $detalle->precio), 2) }}</td>
                 </tr>
             @endif
+          
         @endforeach
     </table>
 
@@ -199,33 +205,45 @@ $parte2Str = implode(' ', $parte2);
             {{-- <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p> --}}
             <p>TOTAL: ${{ number_format($venta->total_iva - $descuentos, 2) }}</p>
         @else
-            <p>Sumas: ${{ number_format($venta->total, 2) }}</p>
-            {{-- <p><b>Descuento: -${{ number_format($descuentos, 2) }}</b></p> --}}
-            <p>Subtotal: ${{ number_format($venta->total - $descuentos, 2) }}</p>
-            <p>IVA 13%: ${{ number_format(($venta->total - $descuentos) * 0.13, 2) }}</p>
-            @if($venta->total - $descuentos >= 100)
-                <p>IVA Percibido 1%: ${{ number_format(($venta->total - $descuentos) * 0.01, 2) }}</p>
-                <p>TOTAL: ${{ number_format(($venta->total_iva - $descuentos) + (($venta->total - $descuentos) * 0.01), 2) }}</p>
+
+            <p>Sumas: ${{ number_format($sumas, 2) }}</p>
+
+            <p>Subtotal: ${{ number_format($sumas, 2) }}</p>
+                @php
+    $totalConIva = $sumas * 1.13;
+                @endphp
+            <p>IVA 13%: ${{ number_format($totalConIva, 2) }}</p>
+            @if($totalConIva >= 100)
+                @php    
+                    $ivaPercibido = $sumas * 0.01;
+                    
+                @endphp
+                <p>IVA Percibido 1%: ${{ number_format($ivaPercibido, 2) }}</p>
+                <p>TOTAL: ${{ number_format($totalConIva + $ivaPercibido, 2) }}</p>
             @else
-                <p>TOTAL: ${{ number_format(($venta->total_iva - $descuentos), 2) }}</p>
+                <p>TOTAL: ${{ number_format($totalConIva, 2) }}</p>
             @endif
         @endif
         <p>--------------------------------</p>
-
-        <p>Monto recibido: ${{ number_format($venta->monto_recibido, 2) }}</p>
-        <p>Cambio: ${{ number_format($venta->cambio, 2) }}</p>
+        @if($venta->elcliente->tipo_cliente == '1')
+            <p>Monto recibido: ${{ number_format($venta->monto_recibido, 2) }}</p>
+            <p>Cambio: ${{ number_format($venta->cambio, 2) }}</p>
+        @else
+            <p>Monto recibido:  ${{ number_format($totalConIva + $ivaPercibido, 2) }}</p>
+            <p>Cambio: $ 0.00</p>
+        @endif
         <p>--------------------------------</p>
     </div>
 
     <div class="footer">
         @php
-$todosExcentos = true;
-foreach ($venta->eldetalle as $detalle) {
-    if ($detalle->elproducto->banexcento != 1) {
-        $todosExcentos = false;
-        break;
-    }
-}
+        $todosExcentos = true;
+        foreach ($venta->eldetalle as $detalle) {
+            if ($detalle->elproducto->banexcento != 1) {
+                $todosExcentos = false;
+                break;
+            }
+        }
         @endphp
 
         @if(!$todosExcentos)

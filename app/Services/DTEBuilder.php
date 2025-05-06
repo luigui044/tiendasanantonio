@@ -32,7 +32,7 @@ class DTEBuilder
             if ($detalle->elproducto->banexcento == 0) {
                 $precioUnitario = round($detalle->precio, 2);
                 $precioUnitarioIva = round($detalle->precio_iva, 2);
-                $cantidad = $detalle->cantidad;
+                           $cantidad = $detalle->cantidad;
                 $ivaUnitario = round($precioUnitario * 0.13, 2);
                 $montoIva = round($ivaUnitario * $cantidad, 2);
                 $ventaGravada = round($precioUnitarioIva * $cantidad, 2);
@@ -170,6 +170,7 @@ class DTEBuilder
     {
       // Inicializar variables para totales
       $totalGravado = 0;
+      $totalGravadoSinIva = 0;
       $totalIva = 0;
       $totalConIva = 0;
       $ivaPercibido = 0;
@@ -177,23 +178,28 @@ class DTEBuilder
       // Calcular totales gravados e IVA para productos no exentos
       foreach($venta->eldetalle as $detalle) {
           if ($detalle->elproducto->banexcento == 0) {
-              $precioUnitario = $detalle->precio;
-              $precioUnitarioIva = $detalle->precio_iva;
-              $cantidad = $detalle->cantidad;
+                        
+            $cantidad = $detalle->cantidad;
+            $precioUnitario = $detalle->precio;
+            $ivaItem = self::redondeoMH(($precioUnitario * 0.13) * $cantidad);
+             $precioUnitarioIva =  self::redondeoMH($precioUnitario * 1.13);
+  
+              $subtotal = $precioUnitarioIva * $cantidad;
+              $subtotalSinIva = $precioUnitario * $cantidad;
+             $totalGravadoSinIva += $subtotalSinIva;
+  
 
-              $subtotal = round($precioUnitario * $cantidad, 2);
-              $ivaItem = round(($precioUnitarioIva - $precioUnitario) * $cantidad, 2);
-
-              $totalGravado += $subtotal;
+            
               $totalIva += $ivaItem;
           }
       }
 
       // Redondear totales
-      $totalGravado = round($totalGravado, 2);
-      $totalIva = round($totalIva, 2);
-      $totalConIva = round($totalGravado + $totalIva, 2);
-      $ivaPercibido = round($totalGravado * 0.01, 2); // 1%
+        $totalIva = self::redondeoMH($totalIva);       
+    $totalGravadoSinIva = self::redondeoMH($totalGravadoSinIva );
+    $totalGravado = self::redondeoMH($totalGravadoSinIva + $totalIva);      
+      $totalConIva = self::redondeoMH($totalGravado + $totalIva);
+      $ivaPercibido = self::redondeoMH($totalGravadoSinIva * 0.01); // 1%
 
       // Construir estructura base del JSON
       $json = [
@@ -253,8 +259,8 @@ class DTEBuilder
               "resumen" => [
                   "totalNoSuj" => 0.0,
                   "totalExenta" => 0.0,
-                  "totalGravada" => $totalGravado,
-                  "subTotalVentas" => $totalGravado,
+                  "totalGravada" => $totalGravadoSinIva,
+                  "subTotalVentas" => $totalGravadoSinIva,
                   "descuNoSuj" => 0.0,
                   "descuExenta" => 0.0,
                   "descuGravada" => 0.0,
@@ -267,20 +273,20 @@ class DTEBuilder
                           "valor" => $totalIva
                       ]
                   ],
-                  "subTotal" => round($totalGravado , 2),
-                  "ivaPerci1" => $totalGravado > 100 ? $ivaPercibido : 0.0,
+                  "subTotal" =>      $totalGravadoSinIva,
+                  "ivaPerci1" => $totalGravadoSinIva > 100 ? $ivaPercibido : 0.0,
                   "ivaRete1" => 0.0,
                   "reteRenta" => 0.0,
-                  "montoTotalOperacion" => $totalConIva,
+                  "montoTotalOperacion" => $totalGravado,
                   "totalNoGravado" => 0.0,
-                  "totalPagar" => $totalConIva,
-                  "totalLetras" => self::convertirNumeroALetras($totalConIva),
+                  "totalPagar" => $totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado,
+                  "totalLetras" => self::convertirNumeroALetras($totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado),
                   "saldoFavor" => 0.0,
                   "condicionOperacion" => 1,
                   "pagos" => [
                       [
                           "codigo" => "01",
-                          "montoPago" => $totalConIva,
+                          "montoPago" =>$totalGravadoSinIva > 100 ? $ivaPercibido + $totalGravado : $totalGravado,
                           "referencia" => null,
                           "plazo" => null,
                           "periodo" => null
@@ -301,12 +307,12 @@ class DTEBuilder
       $contadorItem = 1;
       foreach($venta->eldetalle as $detalle) {
           if ($detalle->elproducto->banexcento == 0) {
-              $precioUnitario = round($detalle->precio, 2);
-              $precioUnitarioIva = round($detalle->precio_iva, 2);
-              $cantidad = $detalle->cantidad;
-
-              $ventaGravada = round($precioUnitario * $cantidad, 2);
-              $montoIva = round(($precioUnitarioIva - $precioUnitario) * $cantidad, 2);
+                   $cantidad = $detalle->cantidad;  
+              $precioUnitario = $detalle->precio;
+              $precioUnitarioIva = self::redondeoMH($detalle->precio * 1.13);
+       
+              $ventaGravada = self::redondeoMH($precioUnitario * $cantidad);
+              $montoIva = self::redondeoMH(($precioUnitario - $precioUnitario) * $cantidad);
 
               $json["dteJson"]["cuerpoDocumento"][] = [
                   "numItem" => $contadorItem,
@@ -333,6 +339,21 @@ class DTEBuilder
       return $json;
 
     }
+
+    public static function redondeoMH($valor) {
+    $valor = floatval($valor);
+    $multiplicado = $valor * 1000; // Para llegar al tercer decimal
+    $entero = floor($multiplicado); // Elimina cualquier exceso
+    $tercerDecimal = $entero % 10;
+    $base = floor($entero / 10); // Esto es el valor con 2 decimales sin redondear
+
+    if ($tercerDecimal >= 5) {
+        $base += 1;
+    }
+
+    return $base / 100;
+}
+
 
     public static function buildNotaDeDebito($venta, $empresa)
     {

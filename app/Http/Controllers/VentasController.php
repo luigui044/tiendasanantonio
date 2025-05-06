@@ -79,10 +79,10 @@ class VentasController extends Controller
                 'id_sucursal' => config('custom.bodega') ,
                 'iva' => ($request->total / 1.13) * 0.13,
                 'iva_percibido' => ($request->total / 1.13) >= 100 ? ($request->total / 1.13) * 0.01 : 0,
-                
                 'monto_recibido' => $request->monto,
                 'cambio' => $request->cambio
             ]);
+     
 
             $total_sin_excentos = 0;
             $total_sin_excentos_con_iva = 0;
@@ -113,12 +113,16 @@ class VentasController extends Controller
             ]);
 
             $venta->refresh();
+
             // Generar factura
             try {
                 if(!$todosExentos) {
+                 
                     // Mover la generación de DTE a un job en cola
                     dispatch(function() use ($venta, $empresa) {
+                      //  Log::info('venta: ' . json_encode($venta));
                         $resultadoDTE = $this->enviarDTE($venta);
+                  
                         if ($resultadoDTE) {
                             $venta->update([
                                 'sello_recibido' => $resultadoDTE['selloRecibido'],
@@ -129,7 +133,7 @@ class VentasController extends Controller
                      
                             event(new FacturaGenerada($venta));
                             $venta->refresh(); // Recargar el modelo para obtener los datos actualizados    
-                          //  Log::info('venta: ' . json_encode($venta));
+                         //  Log::info('venta: ' . json_encode($venta));
                             // Enviar correo después de generar los archivos
                             if ($venta->url_pdf && $venta->url_json) {
                                 // Log::info('Enviando correo a: ' . $venta->elcliente->correo);
@@ -410,6 +414,7 @@ public function ticketRawBT2($id_venta)
 
 
     public function enviarDTE($venta){
+   
         $empresa = TEmpresa::first();
         $url_firmador = $empresa->url_firmador;
 
@@ -421,7 +426,7 @@ public function ticketRawBT2($id_venta)
                 $tipo_venta = $venta->tipo_venta;
                 $json = DTEBuilder::build($venta, $empresa, $tipo_venta);
                 
-Log::info('json: ' . json_encode($json));
+//Log::info('json: ' . json_encode($json));
 
                 $response = Http::post($firmarDTE, $json); 
                 $facturaFirmada = $response->json()['body'];
