@@ -75,6 +75,11 @@ class Inventario extends Controller
         return back()->with('mensaje', 'Proveedor ' . $request->razonSocial . ' ha sido actualizado.');
     }
 
+    public function listarProductos()
+    {
+        $productos = Producto::all();
+        return response()->json($productos);
+    }
 
     function addProd(Request $request)
     {
@@ -373,6 +378,16 @@ class Inventario extends Controller
             $productonuevo->bangranel = $producto->bangranel;
             $productonuevo->banexcento = $producto->banexcento;
             $productonuevo->save();
+
+            $bodegas = [1, 2];
+            foreach ($bodegas as $bodega) {
+                TInventario::create([
+                    'producto' => $productonuevo->id_prod,
+                    'cantidad' => 999999999,
+                    'ubicacion' => $bodega
+                ]);
+            }
+            
 
             return response()->json(['success' => true, 'message' => 'Producto duplicado éxitosamente',
             'producto' => $productonuevo
